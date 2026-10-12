@@ -54,20 +54,51 @@ def norm_api(api):
         return u if u.startswith("http") else "https://" + u
     return api
 
-def reachable(url, timeout=12):
-    """URL 是否可达（HEAD 不行则 GET，200 才算）"""
-    import urllib.request
-    for method in ("HEAD", "GET"):
-        try:
-            req = urllib.request.Request(url, method=method,
-                                         headers={"User-Agent": "Mozilla/5.0"})
-            r = urllib.request.urlopen(req, timeout=timeout)
-            if method == "GET":
-                r.read(1)
-            return r.status == 200
-        except Exception:
-            continue
-    return False
+def quote_url(url):
+    import urllib.parse
+    return urllib.parse.quote(url, safe=':/?#[]@!$&\'()*+,;=%')
+
+def functional_ok(s, timeout=15):
+    """功能实测：200 不代表能打开，必须真实调一次。
+    type0/1 采集站：videolist 必须返回 >0 条影片；
+    type3 py：能下载、编译通过、有 homeContent；
+    type3 js：api 本身是规则则通过，否则必须有可下载的 ext。"""
+    import urllib.request, re, json as _json
+    UA = {"User-Agent": "Mozilla/5.0"}
+    def get(url):
+        req = urllib.request.Request(quote_url(url), headers=UA)
+        r = urllib.request.urlopen(req, timeout=timeout)
+        return r.read()
+    t, api = s.get("type"), str(s.get("api", ""))
+    if t in (0, 1):
+        sep = "&" if "?" in api else "?"
+        data = get(api + sep + "ac=videolist&pg=1").decode("utf-8", "replace")
+        n = len(re.findall(r"<video[\s>]", data))
+        if not n:
+            try:
+                n = len(_json.loads(data).get("list", []))
+            except Exception:
+                pass
+        return n > 0
+    if t == 3:
+        if api.endswith(".py"):
+            data = get(api).decode("utf-8", "replace")
+            if len(data) < 500:
+                return False
+            compile(data, "<spider>", "exec")
+            return "def homeContent" in data
+        data = get(api)
+        if len(data) < 200:
+            return False
+        head = data[:4000].decode("utf-8", "replace")
+        if "var rule" in head or "homeContent" in head or '"rule"' in head:
+            return True  # api 本身就是规则
+        ext = str(s.get("ext", ""))
+        return bool(ext) and len(get(ext)) >= 200
+    if t == 4:
+        r = urllib.request.Request(quote_url(api), headers=UA, method="HEAD")
+        return urllib.request.urlopen(r, timeout=timeout).status == 200
+    return True
 
 def main():
     sites, seen_api, seen_key = [], set(), set()
@@ -126,17 +157,22 @@ def main():
     # 2b) 可达性过滤（自研 spider 不参与，始终保留）
     import concurrent.futures
     cand = sites[2:]
-    print(f"解析配置: {n_cfg} 个，候选站点: {len(cand)}")
+    print(f"解析配置: {n_cfg} 个，候选站点: {len(cand)}，逐个功能实测…")
+    def _check(s):
+        try:
+            return s, functional_ok(s)
+        except Exception:
+            return s, False
     alive, dead = [], 0
-    with concurrent.futures.ThreadPoolExecutor(24) as ex:
-        results = list(ex.map(lambda s: (s, reachable(str(s.get("api", "")))), cand))
-    for s, ok_ in results:
-        if ok_:
-            alive.append(s)
-        else:
-            dead += 1
+    with concurrent.futures.ThreadPoolExecutor(16) as ex:
+        for s, ok_ in ex.map(_check, cand):
+            if ok_:
+                alive.append(s)
+            else:
+                dead += 1
+                print(f"  剔除: {s.get('key')} | {s.get('name','')[:24]}")
     sites = sites[:2] + alive
-    print(f"可达性过滤: 保留 {len(alive)}，剔除死链 {dead}")
+    print(f"实测结果: 保留 {len(alive)}，剔除 {dead}")
 
     # 3) 直播
     manifest = json.load(open(os.path.join(BASE, "staging", "manifest.json"), encoding="utf-8"))
