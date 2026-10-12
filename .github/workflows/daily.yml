@@ -4,12 +4,16 @@ on:
   schedule:
     # 每天 06:00 CST = 前一天 22:00 UTC
     - cron: '0 22 * * *'
-  workflow_dispatch:  # 手动触发，可选 task
+  workflow_dispatch:  # 手动触发，下拉选择 task
     inputs:
       task:
-        description: 'daily（采集+更新）或 import-spiders（一次性导入第三方 spider）'
+        description: '选择要执行的任务'
         required: false
         default: 'daily'
+        type: choice
+        options:
+          - daily
+          - import-spiders
 
 permissions:
   contents: write
