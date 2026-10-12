@@ -165,7 +165,7 @@ def _fmt_dur(sec):
 
 
 class Spider:
-    SITE = "https://www.244544.xyz"
+    SITE = "https://www.244644.xyz"
     NAME = "伊人网"
     # 站点实际视频分类兜底(id 1/2/3/4/9; 站点日后调整会自动以接口为准)
     FALLBACK_CATS = (("1", "中文字幕"), ("2", "自拍"), ("3", "动漫"), ("4", "亚洲无码"), ("9", "国产AV"))
