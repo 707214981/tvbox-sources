@@ -58,6 +58,49 @@ def quote_url(url):
     import urllib.parse
     return urllib.parse.quote(url, safe=':/?#[]@!$&\'()*+,;=%')
 
+def cj_format(api, timeout=15):
+    """探测采集站接口返回格式：'xml' / 'json' / None"""
+    import urllib.request, re, json as _json
+    sep = "&" if "?" in api else "?"
+    try:
+        req = urllib.request.Request(quote_url(api + sep + "ac=videolist&pg=1"),
+                                     headers={"User-Agent": "Mozilla/5.0"})
+        data = urllib.request.urlopen(req, timeout=timeout).read().decode("utf-8", "replace")
+    except Exception:
+        return None
+    if len(re.findall(r"<video[\s>]", data)) > 0:
+        return "xml"
+    try:
+        if len(_json.loads(data).get("list", [])) > 0:
+            return "json"
+    except Exception:
+        pass
+    return None
+
+def fix_cj_site(s):
+    """采集站：按实际返回格式校正 type；https 仅在同格式时采用（防 http-XML/https-JSON 混血）"""
+    api = str(s.get("api", ""))
+    fmt = cj_format(api)
+    if not fmt:
+        return False
+    if api.startswith("http://"):
+        hapi = "https://" + api[len("http://"):]
+        if cj_format(hapi) == fmt:
+            api = hapi
+    s["api"] = api
+    s["type"] = 1 if fmt == "xml" else 0
+    return True
+
+def looks_like_js_rule(data):
+    """是真正的 JS 规则，而不是 HTML 假页面"""
+    head = data[:4000].decode("utf-8", "replace")
+    if "<html" in head[:500].lower() or "<!doctype" in head[:500].lower():
+        return False
+    return ("var rule" in head or "homeContent" in head or '"rule"' in head
+            or "'rule'" in head or "rule={" in head.replace(" ", ""))
+    import urllib.parse
+    return urllib.parse.quote(url, safe=':/?#[]@!$&\'()*+,;=%')
+
 def functional_ok(s, timeout=15):
     """功能实测：200 不代表能打开，必须真实调一次。
     type0/1 采集站：videolist 必须返回 >0 条影片；
@@ -71,15 +114,7 @@ def functional_ok(s, timeout=15):
         return r.read()
     t, api = s.get("type"), str(s.get("api", ""))
     if t in (0, 1):
-        sep = "&" if "?" in api else "?"
-        data = get(api + sep + "ac=videolist&pg=1").decode("utf-8", "replace")
-        n = len(re.findall(r"<video[\s>]", data))
-        if not n:
-            try:
-                n = len(_json.loads(data).get("list", []))
-            except Exception:
-                pass
-        return n > 0
+        return fix_cj_site(s)  # 探测格式、校正 type、https 同格式才切
     if t == 3:
         if api.endswith(".py"):
             data = get(api).decode("utf-8", "replace")
@@ -90,11 +125,13 @@ def functional_ok(s, timeout=15):
         data = get(api)
         if len(data) < 200:
             return False
-        head = data[:4000].decode("utf-8", "replace")
-        if "var rule" in head or "homeContent" in head or '"rule"' in head:
+        if looks_like_js_rule(data):
             return True  # api 本身就是规则
         ext = str(s.get("ext", ""))
-        return bool(ext) and len(get(ext)) >= 200
+        if not ext:
+            return False
+        ext_data = get(ext)
+        return len(ext_data) >= 200 and looks_like_js_rule(ext_data)
     if t == 4:
         r = urllib.request.Request(quote_url(api), headers=UA, method="HEAD")
         return urllib.request.urlopen(r, timeout=timeout).status == 200
