@@ -1,0 +1,79 @@
+name: daily-update
+
+on:
+  schedule:
+    # 每天 06:00 CST = 前一天 22:00 UTC
+    - cron: '0 22 * * *'
+  workflow_dispatch:  # 手动触发，可选 task
+    inputs:
+      task:
+        description: 'daily（采集+更新）或 import-spiders（一次性导入第三方 spider）'
+        required: false
+        default: 'daily'
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    if: inputs.task == '' || inputs.task == 'daily'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Collect sources
+        run: python3 tools/collect.py
+
+      - name: Sample live streams (best effort)
+        run: python3 tools/test_streams.py --staging staging || true
+
+      - name: Generate tvbox.json
+        run: TVBOX_NO_SPLIT=1 python3 tools/gen_tvbox_json.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "tvbox-bot"
+          git config user.email "tvbox-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "daily update $(date -u +%F)"
+            git push
+          fi
+
+  import-spiders:
+    if: inputs.task == 'import-spiders'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Import spiders
+        run: python3 tools/import_spiders.py
+
+      - name: Generate tvbox.json
+        run: TVBOX_NO_SPLIT=1 python3 tools/gen_tvbox_json.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "tvbox-bot"
+          git config user.email "tvbox-bot@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "import third-party spiders $(date -u +%F)"
+            git push
+          fi
