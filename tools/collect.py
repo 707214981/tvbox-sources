@@ -21,6 +21,17 @@ SOURCES = [
     ("joevess", "IPTV", ["home.m3u8", "iptv.m3u8", "m3u"], "live_m3u"),
     ("joevess", "IPTV", ["extra.txt"], "live_txt"),
     ("iptv-org", "iptv", ["streams/cn.m3u", "streams/cn_cctv.m3u"], "live_m3u"),
+    ("qist", "tvbox", ["dianshi.json"], "vod_json"),
+    ("qist", "tvbox", ["ITV.txt"], "live_txt"),
+    ("hkuc", "tvbox-config", ["tv"], "vod_json"),
+    ("wxadxmyz", "muhai-tvbox-sources", ["ysc.json", "xhztv_4k_cleaned.json"], "vod_json"),
+    ("cjj200011222", "tvbox-source", ["api.json"], "vod_json"),
+    ("1771245847", "TvBox", ["tvbox.json", "MoonYs.json", "canyue.json", "FirstYs.json",
+     "zyplayer.json", "catbox.json", "catys.json", "cyys.json", "uz.json", "uzys.json"], "vod_json"),
+    ("best-fan", "iptv-sources", ["cn_all.m3u8", "cn_cctv.m3u8", "cn_province.m3u8"], "live_m3u"),
+    ("ngo5", "IPTV", ["m3u"], "live_m3u"),
+    ("4yt1k", "m3u-autoupdate", ["output/result.m3u"], "live_m3u"),
+    ("4yt1k", "m3u-autoupdate", ["output/result.txt"], "live_txt"),
 ]
 
 EXTS = {
@@ -53,6 +64,13 @@ def parse_streams_txt(text):
             urls.append(line)
     return urls
 
+def json_loads_lenient(text):
+    """宽松解析：去 # 行注释、// 注释、尾随逗号（部分上游是 JSON5 风格）"""
+    body = "\n".join(l for l in text.split("\n") if not l.strip().startswith("#"))
+    body = re.sub(r'(?m)(?<!["\':])//.*$', '', body)
+    body = re.sub(r',\s*([}\]])', r'\1', body)
+    return json.loads(body)
+
 def validate(text, category):
     if category == "vod_py":
         try:
@@ -62,7 +80,7 @@ def validate(text, category):
             return False, f"syntax error: {e}"
     if category == "vod_json":
         try:
-            json.loads(text)
+            json_loads_lenient(text)
             return True, "json ok"
         except Exception as e:
             return False, f"json error: {e}"

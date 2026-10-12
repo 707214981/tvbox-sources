@@ -91,6 +91,14 @@ tvbox-sources/
 | yy-niuma/live-tv | M3U 直播聚合 |
 | joevess/IPTV | m3u8 / txt 直播源 |
 | iptv-org/iptv | 中国区 m3u 直播（cn / cn_cctv） |
+| qist/tvbox | dianshi.json（153 站点配置）+ ITV.txt 直播 |
+| hkuc/tvbox-config | tv/ 多家配置聚合 |
+| wxadxmyz/muhai-tvbox-sources | 清理过的点播配置 |
+| cjj200011222/tvbox-source | api.json（100 站点配置） |
+| 1771245847/TvBox | 10 个点播配置文件 |
+| best-fan/iptv-sources | 每日构建的 m3u8（全量/央视/省份） |
+| ngo5/IPTV | m3u 直播（v4/v6 双栈） |
+| 4yt1k/m3u-autoupdate | 测速聚合的 m3u/txt 直播 |
 
 第三方爬虫另见 `tools/spider_import.json`（195 个，来源为公开分享的 TVBox 配置）。
 
