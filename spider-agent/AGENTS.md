@@ -110,6 +110,7 @@ playerContent：
 - **图片代理**：图片域被拦且壳不带 cookie 时，在 spider 内起本地 HTTP 服务（127.0.0.1 随机端口）源侧带 cookie 抓图再吐给壳，比 TVBox 自带 `proxy://` 通用。
 - **播放签名时效**：`get_file` 类一次性 hash 不要在详情页缓存，`vod_play_url` 存 `详情页URL?q=清晰度`，`playerContent` 时现抓新鲜签名 → 302 → 直链。
 - **实测迭代**：第一版能跑不等于真能用，必须走完"分类→列表→详情→搜索→播放→图片"全链路实测，修完再交付。
+- **M3U8 切片去广告**（playerContent→localProxy→_clean_m3u8_text 三段式）：广告切片常伪装成正常 ts（甚至 .jpg 后缀），抓包提取三要素——M3U8 URL、完整响应体、广告特征（短时长如 0.08s、规律路径如 `^/\d{8}/[a-f0-9]{16}/seg_`、广告与正片之间有 `#EXT-X-DISCONTINUITY`、广告 Key 与正片 Key 不同域名）。状态机逐行清洗：删广告切片与其专属 Key，维护 `ad_pattern` 正则库（per-site，如 `/mov/AD/`、`adjump`、广告域名）。两条铁律：① `#EXT-X-DISCONTINUITY` 必须在正片 `#EXT-X-KEY` 之前输出，否则解码器黑屏崩溃；② 切片与 Key URI 必须补全为公网绝对路径，否则播放器向 127.0.0.1 要切片报 404。Master 嵌套（有 `#EXT-X-STREAM-INF` 无 `#EXTINF`）先向下穿透一级再清洗。代理 URL 拼接用 `sep = "&" if "?" in base_proxy else "?"`（getProxyUrl 自带 `?do=py`，双问号会 Bad HTTP Status）。纯标准库实现。
 
 ## 八、工作方式
 
