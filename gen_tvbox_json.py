@@ -9,8 +9,14 @@
 import json, os, glob, re
 
 BASE = os.path.dirname(os.path.abspath(__file__))
+# 在 tools/ 下运行时，仓库根是上一级；也可用 TVBOX_ROOT 显式指定
+if os.path.basename(BASE) == "tools":
+    BASE = os.path.dirname(BASE)
+BASE = os.environ.get("TVBOX_ROOT", BASE)
 RAW = "https://raw.githubusercontent.com/707214981/tvbox-sources/main"
 SPLIT_BUDGET = 100000
+# GitHub Actions 内直接 git push，无单参数大小限制，可用 TVBOX_NO_SPLIT=1 关闭切分
+NO_SPLIT = os.environ.get("TVBOX_NO_SPLIT") == "1"
 
 def json5_loads(txt):
     """宽松解析：去 # 行注释、// 注释、尾随逗号"""
@@ -25,7 +31,7 @@ def repo_parts(rel):
         size = os.path.getsize(full)
     except OSError:
         return []
-    if size <= SPLIT_BUDGET:
+    if NO_SPLIT or size <= SPLIT_BUDGET:
         return ["staging/" + rel]
     with open(full, encoding="utf-8", errors="replace") as f:
         lines = f.read().split("\n")
