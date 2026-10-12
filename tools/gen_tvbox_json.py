@@ -57,8 +57,8 @@ def norm_api(api):
     m = re.match(r'https?://[^/]+/(https?://.+|github\.com/.+)', api)
     if m:
         u = m.group(1)
-        return u if u.startswith("http") else "https://" + u
-    return api
+        api = u if u.startswith("http") else "https://" + u
+    return api.rstrip("?&")
 
 def quote_url(url):
     import urllib.parse
@@ -167,13 +167,25 @@ def main():
         seen_key.add(key)
         sites.append(s)
 
-    # 1) 自研 spiders
-    for sp, name in [("spiders/91pornsm.py", "91PornSM"),
-                     ("spiders/244544_yiren_fixed.py", "伊人网")]:
-        if os.path.exists(os.path.join(BASE, sp)):
-            add_site({"key": "py_" + os.path.splitext(os.path.basename(sp))[0],
-                      "name": name, "type": 3, "api": RAW + "/" + sp,
-                      "searchable": 1, "quickSearch": 1, "filterable": 1})
+    # 1) spiders/ 目录：自研 + 导入的第三方（展示名来自 spiders/index.json）
+    index_path = os.path.join(BASE, "spiders", "index.json")
+    name_index = json.load(open(index_path, encoding="utf-8")) if os.path.exists(index_path) else {}
+    name_index.setdefault("91pornsm.py", "91PornSM")
+    name_index.setdefault("244544_yiren_fixed.py", "伊人网")
+    spider_files = sorted(f for f in os.listdir(os.path.join(BASE, "spiders"))
+                          if f.endswith((".py", ".js")) and os.path.isfile(os.path.join(BASE, "spiders", f)))
+    for fn in spider_files:
+        name = name_index.get(fn, os.path.splitext(fn)[0])
+        add_site({"key": "py_" + re.sub(r"\W", "_", os.path.splitext(fn)[0]),
+                  "name": name, "type": 3,
+                  "api": quote_url(RAW + "/spiders/" + fn),
+                  "searchable": 1, "quickSearch": 1, "filterable": 1})
+
+    # 1b) 手工精选站点（tools/extra_sites.json）
+    extra_path = os.path.join(BASE, "tools", "extra_sites.json")
+    if os.path.exists(extra_path):
+        for s in json.load(open(extra_path, encoding="utf-8")):
+            add_site(s)
 
     # 2) 从采集到的完整配置中抽取可用站点
     n_cfg = 0
@@ -197,9 +209,10 @@ def main():
             elif t == 4:
                 add_site(s)                       # xpath
             # csp_*（需 jar）跳过
-    # 2b) 可达性过滤（自研 spider 不参与，始终保留）
+    # 2b) 功能实测（spiders/ 下的文件已入库前验过，始终保留；其余逐个实测）
     import concurrent.futures
-    cand = sites[2:]
+    keep = [s for s in sites if s.get("api", "").startswith(quote_url(RAW + "/spiders/"))]
+    cand = [s for s in sites if s not in keep]
     print(f"解析配置: {n_cfg} 个，候选站点: {len(cand)}，逐个功能实测…")
     def _check(s):
         try:
@@ -214,8 +227,8 @@ def main():
             else:
                 dead += 1
                 print(f"  剔除: {s.get('key')} | {s.get('name','')[:24]}")
-    sites = sites[:2] + alive
-    print(f"实测结果: 保留 {len(alive)}，剔除 {dead}")
+    sites = keep + alive
+    print(f"实测结果: 保留 {len(alive)}（+{len(keep)} 个 spiders/ 免检），剔除 {dead}")
 
     # 3) 直播
     manifest = json.load(open(os.path.join(BASE, "staging", "manifest.json"), encoding="utf-8"))
