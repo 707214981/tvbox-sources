@@ -17,6 +17,10 @@ SOURCES = [
     ("hujingguang", "ChinaIPTV", [""], "live_m3u"),
     ("dongyubin", "IPTV", [""], "live_m3u"),
     ("yy-niuma", "live-tv", [""], "live_m3u"),
+    ("gaotianliuyun", "gao", ["js.json"], "vod_json"),
+    ("joevess", "IPTV", ["home.m3u8", "iptv.m3u8", "m3u"], "live_m3u"),
+    ("joevess", "IPTV", ["extra.txt"], "live_txt"),
+    ("iptv-org", "iptv", ["streams/cn.m3u", "streams/cn_cctv.m3u"], "live_m3u"),
 ]
 
 EXTS = {

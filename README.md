@@ -85,9 +85,12 @@ tvbox-sources/
 |---|---|
 | adminouyang/231006 | py 点播脚本、点播/直播 txt |
 | royalhayga/tvbox-master-aggregator | tvbox.json 点播配置 |
+| gaotianliuyun/gao | js.json 点播配置（约 300 站点） |
 | hujingguang/ChinaIPTV | m3u8 直播源 |
 | dongyubin/IPTV | 直播源 |
 | yy-niuma/live-tv | M3U 直播聚合 |
+| joevess/IPTV | m3u8 / txt 直播源 |
+| iptv-org/iptv | 中国区 m3u 直播（cn / cn_cctv） |
 
 第三方爬虫另见 `tools/spider_import.json`（195 个，来源为公开分享的 TVBox 配置）。
 
