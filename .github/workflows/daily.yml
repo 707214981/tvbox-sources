@@ -20,7 +20,8 @@ permissions:
 
 jobs:
   update:
-    if: inputs.task == '' || inputs.task == 'daily'
+    # 定时触发时 inputs 为空，必须显式放行 schedule 事件，否则 job 会被 skip
+    if: github.event_name == 'schedule' || inputs.task == '' || inputs.task == 'daily'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
