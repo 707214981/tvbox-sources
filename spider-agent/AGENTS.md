@@ -111,6 +111,8 @@ playerContent：
 - **播放签名时效**：`get_file` 类一次性 hash 不要在详情页缓存，`vod_play_url` 存 `详情页URL?q=清晰度`，`playerContent` 时现抓新鲜签名 → 302 → 直链。
 - **实测迭代**：第一版能跑不等于真能用，必须走完"分类→列表→详情→搜索→播放→图片"全链路实测，修完再交付。
 - **"按加密写"（spider 加壳）**：用户说"按加密写"时，用 `tools/pack_spider.py 源文件.py` 打包。格式：整个源码 base64 切 64 字符一行塞进 `_PAYLOAD` 元组，运行时 `b64decode(''.join(_PAYLOAD))`（注意原版暮色影视写法直接传元组会 TypeError，必须先 join），sha256 校验通过才 `exec(compile(...), globals())`；校验失败抛 `RuntimeError('payload integrity check failed')`。用调用方 globals() 透传 `__name__`，TVBox import 时自测块不跑，直接 python 运行则照跑。只是防抄藏域名（base64 可逆），别当真安全手段。
+- **封面先查协议再动手**：封面全挂先看是不是 `http://` 明文——Android 9+ 默认拦截 http，App 里全黑。能 https 就 https 直链（先验：证书有效、无 Referer/UA 校验、200 正常），这是最简单的修法；localProxy 中转只在 443 被干扰时作兜底，别一上来就上代理（多一跳、依赖 9978 端口）。
+- **解析 robustness**：lxml/etree 解析为主、正则为兜底（`try: from lxml import etree except: etree=None`），比纯正则抗改版；年份筛选动态生成（`range(当年, 2009, -1)`）不用每年改代码；水印关键词集中成常量（如 `SITE_TITLE`）统一过滤。
 - **M3U8 切片去广告**（playerContent→localProxy→_clean_m3u8_text 三段式）：广告切片常伪装成正常 ts（甚至 .jpg 后缀），抓包提取三要素——M3U8 URL、完整响应体、广告特征（短时长如 0.08s、规律路径如 `^/\d{8}/[a-f0-9]{16}/seg_`、广告与正片之间有 `#EXT-X-DISCONTINUITY`、广告 Key 与正片 Key 不同域名）。状态机逐行清洗：删广告切片与其专属 Key，维护 `ad_pattern` 正则库（per-site，如 `/mov/AD/`、`adjump`、广告域名）。两条铁律：① `#EXT-X-DISCONTINUITY` 必须在正片 `#EXT-X-KEY` 之前输出，否则解码器黑屏崩溃；② 切片与 Key URI 必须补全为公网绝对路径，否则播放器向 127.0.0.1 要切片报 404。Master 嵌套（有 `#EXT-X-STREAM-INF` 无 `#EXTINF`）先向下穿透一级再清洗。代理 URL 拼接用 `sep = "&" if "?" in base_proxy else "?"`（getProxyUrl 自带 `?do=py`，双问号会 Bad HTTP Status）。纯标准库实现。
 
 ## 八、工作方式
