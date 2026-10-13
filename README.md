@@ -99,6 +99,8 @@ tvbox-sources/
 | best-fan/iptv-sources | 每日构建的 m3u8（全量/央视/省份） |
 | ngo5/IPTV | m3u 直播（v4/v6 双栈） |
 | 4yt1k/m3u-autoupdate | 测速聚合的 m3u/txt 直播 |
+| phu889/kjh998 | py 点播脚本（195 个已导入 spider 的源头） |
+| IY-CPU/IY | iy 系列点播 json 配置 + txt |
 
 第三方爬虫另见 `tools/spider_import.json`（195 个，来源为公开分享的 TVBox 配置）。
 
