@@ -32,6 +32,9 @@ SOURCES = [
     ("ngo5", "IPTV", ["m3u"], "live_m3u"),
     ("4yt1k", "m3u-autoupdate", ["output/result.m3u"], "live_m3u"),
     ("4yt1k", "m3u-autoupdate", ["output/result.txt"], "live_txt"),
+    ("phu889", "kjh998", ["py"], "vod_py"),
+    ("IY-CPU", "IY", ["iy.json", "iy2.json", "iy3.json", "iypro.json"], "vod_json"),
+    ("IY-CPU", "IY", ["iy.txt", "iy2.txt"], "vod_txt"),
 ]
 
 EXTS = {
