@@ -1,0 +1,125 @@
+{ "urls": [
+{ 
+      "url":"https://wget.la/https://raw.githubusercontent.com/IY-CPU/IY/main/天神IY.json", 
+      "name": "天神IY测试专用" 
+    },
+    {
+      "url": "http://rihou.cc:88/demo.php",
+      "name": "vox"
+    },
+    
+{ "url": "clan://localhost/pro/demo.json", "name": "本地【vox】" },
+    
+{ "url": "clan://localhost/TVBoxOSC/tvbox/api.json", "name": "本地【潇洒】" },
+
+{ "url": "clan://localhost/小虎斑/tvbox/tvbox.json", "name": "本地【小虎斑】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【天微】/api.json", "name": "本地【天微】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【王二小】/api.json", "name": "本地【王二小】" },
+
+{ "url": "clan://localhost/0本地库【ff】/缘起【天神IY】/api.json", "name": "缘起【天神IY】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【摸鱼儿】/api.json", "name": "本地【摸鱼儿】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【拾光】/api.json", "name": "本地【拾光】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【饭太硬】/api.json", "name": "本地【饭太硬】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【DG音乐台】/api.json", "name": "本地【DG音乐台】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【少儿教育】/api.json", "name": "本地【少儿教育】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【欧歌】/api.json", "name": "本地【欧歌】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【肥猫】/api.json", "name": "本地【肥猫】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【香雅情】/api.json", "name": "本地【香雅情】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【南风】/api.json", "name": "本地【南风】" },
+
+{ "url": "clan://localhost/0本地【真心】/FongMi.json", "name": "本地【真心】" },
+
+{ "url": "clan://localhost/0本地库【ff】/本地【戏曲音乐】/api.json", "name": "本地【戏曲音乐】" },
+
+    {
+      "url": "http://ok321.top/tv",
+      "name": "OK"
+    },
+    {
+      "url": "http://hb.小虎斑.site:25252/仅供测试",
+      "name": "小虎斑"
+    },
+    {
+      "url": "http://tvbox.王二小放牛娃.top/",
+      "name": "王二小"
+    },
+    {
+      "url": "https://9877.kstore.space/AnotherD/api.json",
+      "name": "潇洒"
+    },
+    {
+      "url": "http://fty.xxooo.cf/tv",
+      "name": "饭太硬"
+    },
+    {
+      "url": "https://ym.wya6.cn/",
+      "name": "无意云空间"
+    },
+    {
+      "url": "http://nn.qi-simple.top/common.json",
+      "name": "牛马"
+    },
+    {
+      "url": "https://11405.kstore.space/xiaye/qk4k.json",
+      "name": "夏夜"
+    },
+    {
+      "url": "https://8815.kstore.vip/tvbox/Ace",
+      "name": "林中的小屋"
+    },
+    {
+      "url": "http://我不是.摸鱼儿.com",
+      "name": "摸鱼儿"
+    },    
+    {
+      "url": "https://hk.gh-proxy.com/https://raw.githubusercontent.com/xmbjm/svip/refs/heads/main/svip.json",
+      "name": "拾光"
+    },
+    {
+      "url": "https://7337.kstore.space/kjtv/自用测试.json",
+      "name": "天微"
+    },
+    {
+      "url": "https://cnb.cool/fish2018/pg/-/git/raw/master/jsm.json",
+      "name": "PG"
+    },
+    {
+      "url": "https://cnb.cool/fish2018/zx/-/git/raw/master/FongMi.json",
+      "name": "真心"
+    },
+    {
+      "url": "http://14.103.129.80:999/奇迹云2kmax/qijiyun.json",
+      "name": "奇迹云"
+    },
+    {
+      "url": "http://肥猫.com",
+      "name": "肥猫"
+    },
+    {
+      "url": "https://gh-proxy.com/https://raw.githubusercontent.com/xyq254245/xyqonlinerule/main/XYQTVBox.json",
+      "name": "香雅情"
+    },
+    {
+      "url": "https://gh-proxy.com/https://raw.githubusercontent.com/yoursmile66/TVBox/main/XC.json",
+      "name": "南风"
+    },
+    {
+      "url": "https://ddzb.fun/dgmusic/api.json",
+      "name": "DG音乐台"
+    },
+    {
+      "url": "https://jihulab.com/ymz1231/xymz/-/raw/main/ymshaoer",
+      "name": "少儿教育"
+    }
+]}

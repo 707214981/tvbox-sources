@@ -1,0 +1,16 @@
+{
+  "urls": [
+    { 
+      "url":"https://wget.la/https://raw.githubusercontent.com/IY-CPU/IY/main/天神IY.json", 
+      "name": "天神IY测试专用" 
+    },
+    { 
+      "url":"https://wget.la/https://raw.githubusercontent.com/IY-CPU/IY/main/iy2.json", 
+      "name": "❤在线库" 
+    },
+    {
+      "url":"clan://localhost/f", 
+      "name": "❤本地库【ff】" 
+    }
+  ]
+}
