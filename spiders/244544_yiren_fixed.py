@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-# ============ 伊人网 244544.xyz 源 (成人站 · JSON API 签名站) ============
+# ============ 伊人网 18yiren.tv 源 (成人站 · JSON API 签名站) ============
+# 域名变迁: 244544.xyz → 244644.xyz (2026-10-12) → 277677.xyz (2026-10-14, 旧域名全站 307 跳 /welcome)
+#   站方公告(/welcome): "域名已更换, 请截图保存最新地址 WWW.277677.XYZ, 原有账号可继续使用"
 # 站型: Next.js App Router SPA + 自研 awesome-cms 前端安全层 (非 HTML 爬取, 全走 JSON 接口)
 #   1) 会话:  GET /api/front/client-session → {sessionId, secret, serverEpochMillis, expiresAt}
 #   2) 签名:  请求带 HMAC-SHA256 签名
@@ -23,6 +25,9 @@
 #       v1.1 修复「不能播放/加载视频失败」: 播放线路默认改**直连**(远程原始 m3u8),
 #            与已验证可用的 ririri/1024吃瓜 同策略(壳会按标准 HLS 解析「根相对分片」);
 #            另给第二条「代理」线路(proxy://do=m3u8 → localProxy 绝对化重写)作兜底。
+#       v1.2 2026-10-14 域名迁移: SITE 改为 https://www.277677.xyz;
+#            /api/front/* 接口族在新域名实测可用(分类/首页/列表/分页/详情/搜索全通),
+#            播放取流(POST /api/front/videos/{id}/play-url)沿用旧路径, 未变。
 
 import re, json, base64, time, hmac, hashlib, random, calendar
 from urllib.parse import urljoin, quote, urlencode
@@ -165,7 +170,7 @@ def _fmt_dur(sec):
 
 
 class Spider:
-    SITE = "https://www.244644.xyz"
+    SITE = "https://www.277677.xyz"
     NAME = "伊人网"
     # 站点实际视频分类兜底(id 1/2/3/4/9; 站点日后调整会自动以接口为准)
     FALLBACK_CATS = (("1", "中文字幕"), ("2", "自拍"), ("3", "动漫"), ("4", "亚洲无码"), ("9", "国产AV"))
