@@ -21,7 +21,7 @@ tvbox-sources/
 │
 ├── spiders/                    # 点播爬虫脚本（TVBox type 3 直接引用）
 │   ├── 91pornsm.py             # 自研：91PornSM（14 分类，封面 AES 解密）
-│   ├── 244544_yiren_fixed.py   # 自研：伊人网 244544.xyz（匿名 API 接口族）
+│   ├── 244544_yiren_fixed.py   # 自研：伊人网 18yiren.tv（匿名 API 接口族；域名 244544.xyz→244644.xyz→277677.xyz）
 │   ├── ...                     # 第三方验证可用的 py / js 爬虫约 195 个
 │   └── index.json              # 文件名 → 展示名的映射表
 │
