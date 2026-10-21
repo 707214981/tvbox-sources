@@ -2,6 +2,8 @@
 # ============ 伊人网 18yiren.tv 源 (成人站 · JSON API 签名站) ============
 # 域名变迁: 244544.xyz → 244644.xyz (2026-10-12) → 277677.xyz (2026-10-14, 旧域名全站 307 跳 /welcome)
 #   → 322622.xyz (2026-10-17) → 322722.xyz (2026-10-18) → 322922.xyz (2026-10-19, 旧域名全站 307 跳新域 /welcome)
+#   → 332339.xyz (2026-10-20, 旧域名全站 307 跳新域 /welcome)
+#   → 337332.xyz (2026-10-21, 旧域名全站 307 跳新域 /welcome)
 #   站方公告(/welcome): "域名已更换, 请截图保存最新地址 WWW.277677.XYZ, 原有账号可继续使用"
 # 站型: Next.js App Router SPA + 自研 awesome-cms 前端安全层 (非 HTML 爬取, 全走 JSON 接口)
 #   1) 会话:  GET /api/front/client-session → {sessionId, secret, serverEpochMillis, expiresAt}
@@ -171,7 +173,7 @@ def _fmt_dur(sec):
 
 
 class Spider:
-    SITE = "https://www.322922.xyz"
+    SITE = "https://www.337332.xyz"
     NAME = "伊人网"
     # 站点实际视频分类兜底(id 1/2/3/4/9; 站点日后调整会自动以接口为准)
     FALLBACK_CATS = (("1", "中文字幕"), ("2", "自拍"), ("3", "动漫"), ("4", "亚洲无码"), ("9", "国产AV"))
