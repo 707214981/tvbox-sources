@@ -120,6 +120,12 @@ playerContent：
 - **间歇性 404 可能是限流**：有些站点不用 429，而是随机回 404 + 0 字节空响应。识别：同一 URL 重试后有时成功 → 不是真 404，是限流。处理：退避重试 + 请求间隔 + 响应体量/特征校验（真页面 > N KB；验证码页有固定特征串；空响应直接判失败重试）。真 404 是重试多少次都 404，别混淆。
 - **翻页格式别猜，直接抄站内"下一页"**：分类翻页模板不要靠通用格式碰运气，先抓一页看"下一页/尾页"的真实 href（如本站是 `/vodtype/20-2.html` 而非 `---page/2.html`）。更坑的是**软 200 错乱页**：错模板可能返回 200 且有卡片，但标题分类名丢失（如"_第1页"）、内容不对版——校验必须看标题里的分类名+页码双重确认，标题里没有本分类名直接判失败，不能靠"有卡片就放行"兜底。
 - **M3U8 切片去广告**（playerContent→localProxy→_clean_m3u8_text 三段式）：广告切片常伪装成正常 ts（甚至 .jpg 后缀），抓包提取三要素——M3U8 URL、完整响应体、广告特征（短时长如 0.08s、规律路径如 `^/\d{8}/[a-f0-9]{16}/seg_`、广告与正片之间有 `#EXT-X-DISCONTINUITY`、广告 Key 与正片 Key 不同域名）。状态机逐行清洗：删广告切片与其专属 Key，维护 `ad_pattern` 正则库（per-site，如 `/mov/AD/`、`adjump`、广告域名）。两条铁律：① `#EXT-X-DISCONTINUITY` 必须在正片 `#EXT-X-KEY` 之前输出，否则解码器黑屏崩溃；② 切片与 Key URI 必须补全为公网绝对路径，否则播放器向 127.0.0.1 要切片报 404。Master 嵌套（有 `#EXT-X-STREAM-INF` 无 `#EXTINF`）先向下穿透一级再清洗。代理 URL 拼接用 `sep = "&" if "?" in base_proxy else "?"`（getProxyUrl 自带 `?do=py`，双问号会 Bad HTTP Status）。纯标准库实现。
+- **免翻墙靠域名策略，不靠代理/DNS 黑科技**（MissAV/BadNews/Hanime1 等"免翻"源的共同套路）：被墙的只是知名主域，镜像域（冷门 TLD、编号轮换域）通常不在封锁名单里。落地四件套：①主备镜像——primaryHost（如 missav123.nl）+ fallbackHost（如 thisav.my），详情/搜索按候选列表级联尝试、第一个返回有效内容的赢；②域名池自愈（BadNews 式）——POOL 常量 + ext 配置（host/api/domain/url 键）+ 环境变量三路种子去重，运行时记 dead/fails、坏域自动跳过；③自定义域名缓存防失联（Hanime1 式）——init 先读 `getCache("custom_domain_cache")`，有缓存域名就覆盖默认域名，域名死了不用换文件；④KNOWN_HOSTS 归一——站内链接可能指向本站任一域名，统一改写到当前活域，别让导航把用户带去死域。
+- **真站指纹验证**：域名池切换不能只看 200——停放页、拦截页、CF 验证页都是 200。用 `_site_ok(html)` 验内容指纹：含本站特征串（如 `/dm/play/id-`、`post-card`、`data-tid=`）才算真站；含 `Just a moment`/`Attention Required` 直接判验证页淘汰。
+- **播放走未墙 CDN + Referer 填规范主域**：页面从镜像域抓，但视频 CDN（如 surrit.com）本身没被墙、可直链；CDN 防盗链校验的是规范主域（如 missav.ws），所以 playerContent 的 Referer/Origin 要填**规范主域**而不是抓页用的镜像域——"头域欺骗"，镜像负责拿页、主域负责过校验。
+- **packer 混淆解包取 m3u8**：详情页直链常藏在 Dean Edwards packer（`eval(function(p,a,c,k,e,d)...)`）里，纯 Python 实现 unpack 后再正则提 m3u8，按 1080p>720p>首条选优；兜底是从页面抠 CDN 的 UUID 直接拼 `https://<cdn>/<uuid>/playlist.m3u8`。
+- **图片加密第二形态：base64 包裹 + 多字节循环 XOR**：与 xx9 的"原始二进制、首字节单密钥"不同，这形态是响应体先是一段 base64 文本，b64decode 后再用固定多字节密钥循环异或（`key[i % len(key)]`）。判型流程不变：先魔数验明文 → 不是就试 base64 解码 → 再 XOR → 再验魔数。
+- **进程内图片服务器完整形态**（localProxy 路由不可靠的壳用）：spider 内起 ThreadingHTTPServer 于 127.0.0.1，端口给候选列表逐个试绑（如 9988-9991/18765-18767）；海报 URL 改写为 `http://127.0.0.1:{port}/p/{urlsafe_b64(原图URL)}.jpg`；服务内做磁盘缓存（按 URL hash 落盘）+ 内存缓存（线程锁保护、上限条数）、列表返回后用 ThreadPoolExecutor 后台预热解密（warm），壳来拉时秒回；解密失败回 302 跳原图兜底，不让海报墙挂死。
 
 ## 八、工作方式
 
