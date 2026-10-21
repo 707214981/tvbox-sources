@@ -33,13 +33,23 @@ jobs:
           python-version: '3.11'
 
       - name: Collect sources
-        run: python3 tools/collect.py
+        run: |
+          python3 tools/collect.py || {
+            echo "::warning::collect failed, retrying once in 60s"
+            sleep 60
+            python3 tools/collect.py
+          }
 
       - name: Sample live streams (best effort)
         run: python3 tools/test_streams.py --staging staging || true
 
       - name: Generate tvbox.json
-        run: TVBOX_NO_SPLIT=1 python3 tools/gen_tvbox_json.py
+        run: |
+          TVBOX_NO_SPLIT=1 python3 tools/gen_tvbox_json.py || {
+            echo "::warning::gen_tvbox_json failed, retrying once in 60s"
+            sleep 60
+            TVBOX_NO_SPLIT=1 python3 tools/gen_tvbox_json.py
+          }
 
       - name: Commit and push
         run: |
