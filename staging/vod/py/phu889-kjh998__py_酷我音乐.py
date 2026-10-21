@@ -1,396 +1,311 @@
-from base.spider import Spider
-import requests
-import json
-import re
-import sys
-import base64
-from urllib.parse import quote
+import re, json, base64, html
+try:
+    import requests as _requests
+except Exception:
+    _requests = None
 
-class Spider(Spider):
-    def getName(self):
-        return "小心儿悠悠"
+
+class Spider:
+    def __init__(self):
+        self.site = "http://wapi.kuwo.cn"
+        self.name = "酷我音乐"
+        self.header = {
+            "User-Agent": "Mozilla/5.0 (Linux; Android 13; SM-S9080) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+            "Referer": "http://www.kuwo.cn/",
+            "Accept-Language": "zh-CN,zh;q=0.9",
+            "Accept": "*/*",
+        }
+        self.s = self.session = self.sess = _requests.Session() if _requests else None
+        self._play_ua = "Mozilla/5.0 (Linux; Android 10)"
+        self._defpic = "https://image.kuwo.cn/newvip/icon/100.ico"
+        self._cats = [
+            {"type_id": "bang:16", "type_name": "热歌榜"},
+            {"type_id": "bang:17", "type_name": "新歌榜"},
+            {"type_id": "bang:93", "type_name": "飙升榜"},
+            {"type_id": "ac:1", "type_name": "华语男"},
+            {"type_id": "ac:2", "type_name": "华语女"},
+            {"type_id": "ac:3", "type_name": "华语组合"},
+            {"type_id": "ac:4", "type_name": "日韩男"},
+            {"type_id": "ac:5", "type_name": "日韩女"},
+            {"type_id": "ac:6", "type_name": "日韩组合"},
+            {"type_id": "ac:7", "type_name": "欧美男"},
+            {"type_id": "ac:8", "type_name": "欧美女"},
+            {"type_id": "ac:9", "type_name": "欧美组合"},
+            {"type_id": "ac:0", "type_name": "其他"},
+        ]
+
+    def getDependence(self):
+        return []
+
+    def manualVideoCheck(self):
+        return False
+
+    def isVideoFormat(self, url):
+        if not url:
+            return False
+        u = str(url).lower()
+        return u.endswith((".m3u8", ".mp4", ".flv", ".mkv", ".ts", ".avi")) or "m3u8" in u
+
+    def destroy(self):
+        pass
+
+    def action(self, action):
+        return {}
+
+    def _get(self, url, referer=None, ua=None):
+        h = dict(self.header)
+        if ua:
+            h["User-Agent"] = ua
+        if referer:
+            h["Referer"] = referer
+        if self.s is not None:
+            try:
+                r = self.s.get(url, headers=h, timeout=12, allow_redirects=True)
+                if r.status_code < 400:
+                    return r.text
+            except Exception:
+                pass
+        try:
+            import urllib.request
+            req = urllib.request.Request(url, headers=h)
+            with urllib.request.urlopen(req, timeout=12) as resp:
+                return resp.read().decode("utf-8", "ignore")
+        except Exception:
+            return ""
+
+    def _getj(self, url, referer=None, ua=None):
+        try:
+            return json.loads(self._get(url, referer=referer, ua=ua) or "")
+        except Exception:
+            return {}
+
+    def _u(self, u):
+        if not u:
+            return u
+        u = u.strip()
+        if u.startswith("//"):
+            return "https:" + u
+        if u.startswith("http"):
+            return u
+        if u.startswith("/"):
+            m = re.match(r"(https?://[^/]+)", self.site)
+            return (m.group(1) if m else self.site) + u
+        return self.site.rstrip("/") + "/" + u.lstrip("/")
+
+    def _clean(self, s):
+        if not s:
+            return ""
+        s = html.unescape(str(s))
+        s = re.sub(r"<[^>]+>", "", s).replace("\xa0", " ").replace("&nbsp;", " ").strip()
+        return s
+
+    def _b64e(self, s):
+        return base64.urlsafe_b64encode(s.encode("utf-8")).decode().rstrip("=")
+
+    def _b64d(self, s):
+        try:
+            s = str(s or "")
+            s += "=" * (-len(s) % 4)
+            return base64.urlsafe_b64decode(s).decode("utf-8")
+        except Exception:
+            return ""
+
+    def _safe_name(self, s):
+        return str(s or "").replace("#", "").replace("$", "").strip()
+
+    def _song_vod(self, name, rid, artist="", pic=""):
+        name = self._clean(name)
+        rid = str(rid or "")
+        return {
+            "vod_id": "ksong:%s:%s" % (rid, self._b64e(name)),
+            "vod_name": name,
+            "vod_pic": self._u(pic) if pic else self._defpic,
+            "vod_remarks": self._clean(artist),
+        }
+
+    def _chart_songs(self, bang_id, pg):
+        url = ("http://wapi.kuwo.cn/api/www/bang/bang/musicList?bangId=%s&pn=%d&rn=30"
+               % (bang_id, pg))
+        d = self._getj(url)
+        arr = ((d.get("data") or {}).get("musicList")) or []
+        out = []
+        for it in arr:
+            rid = str(it.get("rid") or "")
+            if not rid:
+                continue
+            out.append(self._song_vod(it.get("name"), rid, it.get("artist"), it.get("pic")))
+        return out
+
+    def _artists(self, tid, pg):
+        url = ("http://wapi.kuwo.cn/api/www/artist/artistInfo?category=%s&prefix=&pn=%d&rn=30"
+               % (tid, pg))
+        d = self._getj(url)
+        arr = ((d.get("data") or {}).get("artistList")) or []
+        out = []
+        for it in arr:
+            aid = str(it.get("id") or "")
+            if not aid:
+                continue
+            pic = it.get("pic300") or it.get("pic") or it.get("pic120") or ""
+            out.append({
+                "vod_id": "artist:%s" % aid,
+                "vod_name": self._clean(it.get("name")),
+                "vod_pic": self._u(pic) if pic else self._defpic,
+                "vod_remarks": "",
+            })
+        return out
+
+    def _artist_songs(self, aid):
+        songs = []
+        for p in range(1, 11):
+            url = ("http://wapi.kuwo.cn/api/www/artist/artistMusic?artistid=%s&pn=%d&rn=30"
+                   % (aid, p))
+            d = self._getj(url)
+            if d.get("code") != 200:
+                break
+            arr = ((d.get("data") or {}).get("list")) or []
+            if not arr:
+                break
+            for it in arr:
+                name = str(it.get("name") or "").replace("$", "").replace("#", "").strip()
+                rid = str(it.get("rid") or "")
+                if name and rid:
+                    songs.append((name, rid))
+            if len(songs) >= 300:
+                break
+        return songs[:300]
+
+    def _artist_name(self, aid):
+        d = self._getj("http://wapi.kuwo.cn/api/www/artist/artist?artistid=%s" % aid)
+        if d.get("code") == 200:
+            return self._clean((d.get("data") or {}).get("name"))
+        return ""
+
+    # 音质: (quality_id, bitrate, format)
+    _QUALS = (("320", "320", "mp3"), ("2000", "2000", "flac"), ("128", "128", "mp3"))
+    _QUAL_FROM = "高品质$$$无损$$$标准"
+
+    def _resolve_url(self, rid, quality="320"):
+        bitrate, fmt = "320", "mp3"
+        for q, b, f in self._QUALS:
+            if q == str(quality):
+                bitrate, fmt = b, f
+                break
+        url = ("https://nmobi.kuwo.cn/mobi.s?f=web&user=0&source=kwplayer_ar_4.4.2.7_B_nuoweida_vh.apk"
+               "&type=convert_url_with_sign&rid=%s&bitrate=%s&format=%s" % (rid, bitrate, fmt))
+        d = self._getj(url, referer="http://www.kuwo.cn/", ua=self._play_ua)
+        if d.get("code") == 200:
+            return str((d.get("data") or {}).get("url") or "")
+        return ""
 
     def init(self, extend=""):
         pass
 
-    def isVideoFormat(self, url):
-        pass
-
-    def manualVideoCheck(self):
-        pass
-
-    def homeContent(self, filter):
-        result = {}
-        cateId = [
-            {"type_name": "华语男", "type_id": "1"},
-            {"type_name": "华语女", "type_id": "2"},
-            {"type_name": "华语组合", "type_id": "3"},
-            {"type_name": "日韩男", "type_id": "4"},
-            {"type_name": "日韩女", "type_id": "5"},
-            {"type_name": "日韩组合", "type_id": "6"},
-            {"type_name": "欧美男", "type_id": "7"},
-            {"type_name": "欧美女", "type_id": "8"},
-            {"type_name": "欧美组合", "type_id": "9"},
-            {"type_name": "其他", "type_id": "0"}
-        ]
-        result['class'] = cateId
-        return result
+    def homeContent(self, filter=None):
+        return {"class": self._cats, "list": self._chart_songs("16", 1)}
 
     def homeVideoContent(self):
-        result = self.categoryContent("1", 1, False, {})
-        return result
+        return {"list": self._chart_songs("16", 1)}
 
-    def categoryContent(self, tid, pg, filter, extend):
-        result = {}
-        url = f"http://wapi.kuwo.cn/api/www/artist/artistInfo?category={tid}&prefix=&pn={pg}&rn=30"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Referer': 'http://www.kuwo.cn/'
-        }
-        
+    def categoryContent(self, tid, pg=1, filter=None, extend=None):
         try:
-            r = requests.get(url, headers=headers, timeout=10)
-            data = r.json()
-            videos = []
-            if data.get('data') and data['data'].get('artistList'):
-                for item in data['data']['artistList']:
-                    video = {
-                        "vod_id": str(item.get('id', '')),
-                        "vod_name": item.get('name', ''),
-                        "vod_pic": item.get('pic300') or item.get('pic') or item.get('pic120', ''),
-                        "vod_remarks": f""
-                    }
-                    videos.append(video)
-            
-            result['list'] = videos
-            result['page'] = pg
-            result['pagecount'] = 9999
-            result['limit'] = 90
-            result['total'] = 999999
-            
-        except Exception as e:
-            result['list'] = []
-        
-        return result
+            pg = int(pg)
+        except Exception:
+            pg = 1
+        t = str(tid or "")
+        if t.startswith("bang:"):
+            bang_id = t.split(":", 1)[1]
+            vod_list = self._chart_songs(bang_id, pg)
+            return {"list": vod_list, "page": pg, "pagecount": 4,
+                    "limit": 30, "total": 100}
+        if t.startswith("ac:"):
+            cat = t.split(":", 1)[1]
+            vod_list = self._artists(cat, pg)
+            pagecount = pg + 1 if len(vod_list) >= 30 else pg
+            return {"list": vod_list, "page": pg, "pagecount": pagecount,
+                    "limit": 30, "total": pagecount * 30}
+        return {"list": [], "page": pg, "pagecount": 1, "limit": 30, "total": 0}
 
     def detailContent(self, ids):
-        rid = ids[0]
-        result = {}
-        
-        info_url = f"http://wapi.kuwo.cn/api/www/artist/artist?artistid={rid}"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Referer': 'http://www.kuwo.cn/'
-        }
-        
-        try:
-            r = requests.get(info_url, headers=headers, timeout=10)
-            info_data = r.json().get('data', {})
-            
-            artist_name = info_data.get('name', '')
-            
-            all_songs = self._get_artist_songs(rid)
-            
-            artist_info = info_data.get('info', '')
-            artist_info = re.sub(r'<[^>]+>', '', artist_info)
-            artist_info = artist_info.replace('&nbsp;', ' ')
-            artist_info = artist_info.replace('\r\n', '\n').replace('\r', '\n')
-            artist_info = artist_info.strip()
-            
-            max_songs = 300
-            if len(all_songs) > max_songs:
-                all_songs = all_songs[:max_songs]
-            
-            play_arr = []
-            for i, song in enumerate(all_songs):
-                name = re.sub(r'[$#]', '', song.get('name', '')).strip()
-                song_id = song.get('rid', '')
-                album = song.get('album', '')
-                
-                if album:
-                    play_arr.append(f"{name} - {album}${song_id}")
-                else:
-                    play_arr.append(f"{name}${song_id}")
-            
-            vod = {
-                "vod_id": rid,
-                "vod_name": artist_name,
-                "vod_pic": info_data.get('pic300') or info_data.get('pic', ''),
-                "vod_content": artist_info if artist_info else "暂无歌手简介",
-                "vod_remarks": f"歌曲 :   {len(all_songs)}首",
-                "vod_actor": artist_name,
-                "vod_play_from": "酷我音乐",
-                "vod_play_url": "#".join(play_arr)
-            }
-            
-            result['list'] = [vod]
-            
-        except Exception as e:
-            vod = {
-                "vod_id": rid,
-                "vod_name": "加载失败",
-                "vod_content": f"加载歌手信息失败: {str(e)}",
-                "vod_remarks": "加载失败",
-                "vod_actor": "未知",
-                "vod_play_from": "酷我音乐",
-                "vod_play_url": ""
-            }
-            result['list'] = [vod]
-        
-        return result
+        vid = ids[0] if isinstance(ids, (list, tuple)) and ids else ids
+        vid = str(vid or "").strip()
+        if vid.startswith("artist:"):
+            aid = vid.split(":", 1)[1]
+            name = self._artist_name(aid) or "歌手"
+            songs = self._artist_songs(aid)
+            play_url = "$$$".join(
+                "#".join("%s$kplay:%s:%s" % (self._safe_name(n), q, r) for n, r in songs)
+                for q, _, _ in self._QUALS)
+            return {"list": [{
+                "vod_id": vid, "vod_name": name, "vod_pic": self._defpic,
+                "vod_content": "%s 全部歌曲（%d 首）" % (name, len(songs)),
+                "vod_play_from": self._QUAL_FROM, "vod_play_url": play_url,
+            }]}
+        if vid.startswith("ksong:"):
+            parts = vid.split(":", 2)
+            rid = parts[1] if len(parts) > 1 else ""
+            name = self._b64d(parts[2]) if len(parts) > 2 else ""
+            if not name:
+                name = "歌曲" + rid
+            play_url = "$$$".join(
+                "%s$kplay:%s:%s" % (self._safe_name(name), q, rid) for q, _, _ in self._QUALS)
+            return {"list": [{
+                "vod_id": vid, "vod_name": name, "vod_pic": self._defpic,
+                "vod_content": name,
+                "vod_play_from": self._QUAL_FROM,
+                "vod_play_url": play_url,
+            }]}
+        return {"list": []}
 
-    def _get_artist_songs(self, rid):
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Referer': 'http://www.kuwo.cn/'
-        }
-        
-        songs = []
-        max_pages = 10
-        
-        for page in range(1, max_pages + 1):
-            try:
-                url = f"http://wapi.kuwo.cn/api/www/artist/artistMusic?artistid={rid}&pn={page}&rn=30"
-                response = requests.get(url, headers=headers, timeout=10)
-                data = response.json()
-                
-                if data.get('code') == 200:
-                    music_data = data.get('data', {})
-                    song_list = music_data.get('list', [])
-                    
-                    if not song_list:
-                        break
-                    
-                    for song in song_list:
-                        song_name = song.get('name', '').strip()
-                        if song_name:
-                            songs.append({
-                                'name': song_name,
-                                'rid': song.get('rid', ''),
-                                'album': song.get('album', ''),
-                                'duration': song.get('duration', '')
-                            })
-                    
-                    if len(songs) >= 300:
-                        songs = songs[:300]
-                        break
-                        
-            except Exception:
-                continue
-        
-        return songs
-
-    def playerContent(self, flag, id, vipFlags):
-        result = {}
-        rid = id
-        
-        qualities = []
-        
-        quality_list = [
-            ("无损FLAC", 2000, "flac"),
-            ("高品质320K", 320, "mp3"),
-            ("标准128K", 128, "mp3")
-        ]
-        
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Linux; Android 10)',
-            'Referer': 'https://www.kuwo.cn/'
-        }
-        
-        for quality_name, bitrate, format_type in quality_list:
-            try:
-                api_url = f"https://nmobi.kuwo.cn/mobi.s?f=web&user=0&source=kwplayer_ar_4.4.2.7_B_nuoweida_vh.apk&type=convert_url_with_sign&rid={rid}&bitrate={bitrate}&format={format_type}"
-                r = requests.get(api_url, headers=headers, timeout=5)
-                data = r.json()
-                if data.get('code') == 200 and data.get('data') and data['data'].get('url'):
-                    qualities.append((quality_name, data['data']['url']))
-            except Exception:
-                continue
-        
-        if not qualities:
-            result["parse"] = 0
-            result["playUrl"] = ""
-            result["url"] = ""
-            result["header"] = {}
-            return result
-        
-        urls = []
-        for quality_name, quality_url in qualities:
-            urls.append(quality_name)
-            urls.append(quality_url)
-        
-        lrc = ""
-        pic = ""
-        
+    def searchContent(self, key, quick=False, pg="1"):
         try:
-            lrc_api = f"https://kuwo.cn/openapi/v1/www/lyric/getlyric?musicId={rid}"
-            lr = requests.get(lrc_api, timeout=5)
-            lj = lr.json()
-            if lj.get('data') and lj['data'].get('lrclist'):
-                lrc = "\n".join([f"[{self._format_time(float(item.get('time', 0)))}]{item.get('lineLyric', '')}" 
-                               for item in lj['data']['lrclist']])
+            from urllib.parse import quote
+            url = ("https://search.kuwo.cn/r.s?all=%s&ft=music&itemset=web_2013"
+                   "&client=kt&pn=0&rn=30&rformat=json&encoding=utf8" % quote(str(key)))
         except Exception:
-            pass
-        
-        try:
-            pic_url = f"http://artistpicserver.kuwo.cn/pic.web?type=rid_pic&pictype=url&size=500&rid={rid}"
-            pr = requests.get(pic_url, timeout=5)
-            if pr.text.startswith('http'):
-                pic = pr.text.strip()
-            else:
-                pic = pic_url
-        except Exception:
-            pic = f"http://artistpicserver.kuwo.cn/pic.web?type=rid_pic&pictype=url&size=500&rid={rid}"
-        
-        if lrc:
-            try:
-                ssa_lrc = self._create_ssa_subtitle(lrc)
-                ssa_base64 = base64.b64encode(ssa_lrc.encode('utf-8')).decode('utf-8')
-                ssa_url = f"data:text/x-ssa;base64,{ssa_base64}"
-                
-                result["subs"] = [{
-                    "name": "5行歌词",
-                    "url": ssa_url,
-                    "format": "text/x-ssa",
-                    "selected": True
-                }]
-            except Exception:
-                pass
-        
-        result["parse"] = 0
-        result["playUrl"] = ""
-        result["url"] = urls
-        result["header"] = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-            "Referer": "https://www.kuwo.cn/"
-        }
-        
-        return result
+            return {"list": []}
+        txt = self._get(url)
+        if not txt:
+            return {"list": []}
+        out, seen = [], set()
+        for m in re.finditer(r"'SONGNAME':'(.*?)'.*?'ARTIST':'(.*?)'.*?'MUSICRID':'MUSIC_(\d+)'",
+                             txt, re.S):
+            rid = m.group(3)
+            if rid in seen:
+                continue
+            seen.add(rid)
+            out.append(self._song_vod(m.group(1), rid, m.group(2), ""))
+        return {"list": out}
 
-    def _format_time(self, seconds):
-        m = int(seconds // 60)
-        s = seconds % 60
-        return f"{m:02d}:{s:05.2f}"
-
-    def _create_ssa_subtitle(self, lrc_text):
-        lines = []
-        pattern = r'\[(\d{2}):(\d{2})\.(\d{2})\](.*)'
-        
-        for line in lrc_text.split('\n'):
-            match = re.match(pattern, line)
-            if match:
-                minutes = int(match.group(1))
-                seconds = int(match.group(2))
-                hundredths = int(match.group(3))
-                text = match.group(4).strip()
-                
-                total_seconds = minutes * 60 + seconds + hundredths / 100.0
-                if text:
-                    lines.append({
-                        'start': total_seconds,
-                        'text': text
-                    })
-        
-        if not lines:
-            return ""
-        
-        ssa_header = """[Script Info]
-ScriptType: v4.00+
-Collisions: Normal
-PlayResX: 1280
-PlayResY: 720
-Timer: 100.0000
-WrapStyle: 0
-
-[V4+ Styles]
-Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: WAITING_TOP2,Roboto,55,&H0000FFFF,&H00808080,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,1,1,2,0,0,180,1
-Style: WAITING_TOP1,Roboto,55,&H0000FFFF,&H00808080,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,1,1,2,0,0,260,1
-Style: PLAYING_CENTER,Roboto,60,&H0000FF00,&H00808080,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,2,2,2,0,0,340,1
-Style: PLAYED_BOTTOM1,Roboto,55,&H0000FFFF,&H00808080,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,1,1,2,0,0,420,1
-Style: PLAYED_BOTTOM2,Roboto,55,&H0000FFFF,&H00808080,&H00000000,&H00000000,-1,0,0,0,100,100,0,0,1,1,1,2,0,0,500,1
-
-[Events]
-Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-"""
-        
-        def format_ssa_time(seconds):
-            h = int(seconds // 3600)
-            m = int((seconds % 3600) // 60)
-            s = int(seconds % 60)
-            cs = int((seconds * 100) % 100)
-            return f"{h}:{m:02d}:{s:02d}.{cs:02d}"
-        
-        events = []
-        
-        for i in range(len(lines)):
-            current = lines[i]
-            current_end = lines[i+1]['start'] if i+1 < len(lines) else current['start'] + 5.0
-            
-            wait2 = lines[i+2] if i+2 < len(lines) else None
-            wait1 = lines[i+1] if i+1 < len(lines) else None
-            played1 = lines[i-1] if i-1 >= 0 else None
-            played2 = lines[i-2] if i-2 >= 0 else None
-            
-            start_str = format_ssa_time(current['start'])
-            end_str = format_ssa_time(current_end)
-            
-            if wait2:
-                events.append(f"Dialogue: 1,{start_str},{end_str},WAITING_TOP2,,0,0,0,,{wait2['text']}")
-            
-            if wait1:
-                events.append(f"Dialogue: 2,{start_str},{end_str},WAITING_TOP1,,0,0,0,,{wait1['text']}")
-            
-            events.append(f"Dialogue: 3,{start_str},{end_str},PLAYING_CENTER,,0,0,0,,{current['text']}")
-            
-            if played1:
-                events.append(f"Dialogue: 4,{start_str},{end_str},PLAYED_BOTTOM1,,0,0,0,,{played1['text']}")
-            
-            if played2:
-                events.append(f"Dialogue: 5,{start_str},{end_str},PLAYED_BOTTOM2,,0,0,0,,{played2['text']}")
-        
-        return ssa_header + "\n".join(events)
-
-    def searchContent(self, key, quick, pg=1):
-        result = {}
-        wd = quote(key)
-        page_num = (int(pg) - 1) * 30
-        url = f"https://search.kuwo.cn/r.s?client=kt&pn={page_num}&rn=30&all={wd}&vipver=1&ft=artist&encoding=utf8&rformat=json&mobi=1"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Referer': 'http://www.kuwo.cn/'
-        }
-        
-        try:
-            r = requests.get(url, headers=headers, timeout=10)
-            data = r.json()
-            videos = []
-            if data.get('abslist'):
-                base_path = data.get('BASEPICPATH', 'http://img1.kuwo.cn/star/starheads/')
-                for item in data['abslist']:
-                    aid = item.get('ARTISTID') or item.get('DC_TARGETID', '')
-                    pic = item.get('hts_PICPATH') or (base_path + item['PICPATH'] if item.get('PICPATH') else '')
-                    video = {
-                        "vod_id": str(aid),
-                        "vod_name": item.get('ARTIST', ''),
-                        "vod_pic": pic,
-                        "vod_remarks": f"歌曲 :  {item.get('SONGNUM', 0)}首"
-                    }
-                    videos.append(video)
-            
-            result['list'] = videos
-            result['page'] = pg
-            result['pagecount'] = 9999
-            result['limit'] = 30
-            result['total'] = 999999
-            
-        except Exception as e:
-            result['list'] = []
-        
-        return result
-
-    def searchContentPage(self, key, quick, pg):
-        return self.searchContent(key, quick, pg)
+    def playerContent(self, flag, ids, vipFlags=None):
+        rid = ids[0] if isinstance(ids, (list, tuple)) and ids else ids
+        rid = str(rid or "").strip()
+        if rid.startswith("kplay:"):
+            rid = rid[len("kplay:"):]
+        quality = "320"
+        if ":" in rid:
+            q, _, r = rid.partition(":")
+            if q in ("2000", "320", "128"):
+                quality, rid = q, r
+        if not rid:
+            return {"parse": 0, "url": "", "header": dict(self.header)}
+        return {"parse": 0, "url": self._resolve_url(rid, quality), "header": dict(self.header)}
 
     def localProxy(self, param):
-        return None
+        u = param.get("url", "") if isinstance(param, dict) else ""
+        if not u:
+            return [403, "text/plain", b"", None]
+        h = dict(self.header)
+        if self.s is not None:
+            try:
+                r = self.s.get(u, headers=h, timeout=15)
+                return [200, r.headers.get("Content-Type", "application/octet-stream"), r.content, None]
+            except Exception:
+                pass
+        try:
+            import urllib.request
+            req = urllib.request.Request(u, headers=h)
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                return [200, resp.headers.get("Content-Type", "application/octet-stream"), resp.read(), None]
+        except Exception:
+            return [403, "text/plain", b"", None]
