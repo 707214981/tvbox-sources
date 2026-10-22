@@ -31,9 +31,12 @@
 #       v1.2 2026-10-14 域名迁移: SITE 改为 https://www.277677.xyz;
 #            /api/front/* 接口族在新域名实测可用(分类/首页/列表/分页/详情/搜索全通),
 #            播放取流(POST /api/front/videos/{id}/play-url)沿用旧路径, 未变。
+#       v1.3 2026-10-22 域名迁移自适应: _http 检测跳转后最终 URL 的 host, 变化且符合
+#            www.<6位数字>.xyz 格式时自动换站重试一次(同步 Referer/Origin、重建会话);
+#            不符合格式的跳转一律不跟。SITE 更新为 https://www.337334.xyz (第8次迁移)。
 
 import re, json, base64, time, hmac, hashlib, random, calendar
-from urllib.parse import urljoin, quote, urlencode
+from urllib.parse import urljoin, quote, urlencode, urlparse
 
 try:
     import requests as _requests
@@ -173,7 +176,7 @@ def _fmt_dur(sec):
 
 
 class Spider:
-    SITE = "https://www.337332.xyz"
+    SITE = "https://www.337334.xyz"
     NAME = "伊人网"
     # 站点实际视频分类兜底(id 1/2/3/4/9; 站点日后调整会自动以接口为准)
     FALLBACK_CATS = (("1", "中文字幕"), ("2", "自拍"), ("3", "动漫"), ("4", "亚洲无码"), ("9", "国产AV"))
@@ -233,25 +236,66 @@ class Spider:
         return u.endswith((".m3u8", ".mp4", ".flv", ".mkv", ".ts", ".avi")) or "m3u8" in u
 
     # ---------------- 网络 (壳 → requests → urllib 三级) ----------------
-    def _http(self, url, method="GET", data=None, headers=None, timeout=12):
-        """返回 (status, text)；全失败 (0, "")"""
+    # 域名迁移自适应：站方换域名时老域全站 307 跳新域 /welcome，从跳转后最终 URL
+    # 提取新 host；仅接受 www.<6位数字>.xyz 格式（本站历史域名全符合），不符合一律不跟。
+    _HOST_RE = None
+
+    def _migration_target(self, req_url, final_url):
+        """请求被跳转且最终 host 与当前 site 不同、且符合本站域名格式时返回新 site，否则 None"""
+        try:
+            if not req_url or not final_url or req_url == final_url:
+                return None
+            cur = urlparse(self.site)
+            src = urlparse(req_url)
+            dst = urlparse(final_url)
+            if src.hostname != cur.hostname or not dst.hostname or dst.hostname == cur.hostname:
+                return None
+            if Spider._HOST_RE is None:
+                Spider._HOST_RE = re.compile(r"^www\.\d{6}\.xyz$")
+            if not Spider._HOST_RE.match(dst.hostname):
+                return None
+            return "%s://%s" % (dst.scheme or "https", dst.hostname)
+        except Exception:
+            return None
+
+    def _http(self, url, method="GET", data=None, headers=None, timeout=12, _followed=False):
+        """返回 (status, text)；全失败 (0, "")。检测到域名迁移则换站重试一次"""
         h = dict(self.header)
         if headers:
             h.update(headers)
+        status, text, final_url = 0, "", ""
         if self.s is not None:
             try:
                 r = self.s.request(method, url, headers=h, data=data, timeout=timeout, allow_redirects=True)
-                return r.status_code, (r.text or "")
+                status, text, final_url = r.status_code, (r.text or ""), (r.url or "")
             except Exception:
-                pass
-        try:
-            import urllib.request
-            body = data.encode("utf-8") if isinstance(data, str) else data
-            req = urllib.request.Request(url, data=body, headers=h, method=method)
-            with urllib.request.urlopen(req, timeout=timeout) as resp:
-                return resp.getcode(), resp.read().decode("utf-8", "ignore")
-        except Exception:
-            return 0, ""
+                status, text, final_url = 0, "", ""
+        if not final_url:
+            try:
+                import urllib.request
+                body = data.encode("utf-8") if isinstance(data, str) else data
+                req = urllib.request.Request(url, data=body, headers=h, method=method)
+                with urllib.request.urlopen(req, timeout=timeout) as resp:
+                    status, text, final_url = resp.getcode(), resp.read().decode("utf-8", "ignore"), (resp.geturl() or "")
+            except Exception:
+                return 0, ""
+        if not _followed:
+            new_site = self._migration_target(url, final_url)
+            if new_site:
+                self.site = new_site
+                self.header["Referer"] = new_site + "/"
+                self.header["Origin"] = new_site
+                self._sess = None
+                try:
+                    p = urlparse(url)
+                    new_url = "%s%s" % (new_site, p.path or "/")
+                    if p.query:
+                        new_url += "?" + p.query
+                except Exception:
+                    new_url = url
+                return self._http(new_url, method=method, data=data, headers=headers,
+                                  timeout=timeout, _followed=True)
+        return status, text
 
     # ---------------- 会话 ----------------
     def _ensure_session(self, force=False):
