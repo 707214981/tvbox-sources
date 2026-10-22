@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-咕噜咕噜 —— TVBox 蜘蛛框架Python 爬虫）。
-
+咕噜咕噜 —— TVBox 蜘蛛源（Python 爬虫）。
 """
 
 from __future__ import annotations
@@ -34,7 +33,7 @@ APP_SIGNATURE = "32E0AB4FF93A29CE0E6F0BFB01F2F1B788E76262731F3F30F509CB822428ED5
 DEVICE_BUILD = "pangu-build-component-system-513739-s9vkd-rlxnj-p3rhm"
 VERSION_GUARD_MARKERS = ("__v99_", "glgl.tv", "111.170.58.215", "shu.jpg")
 FALLBACK_PARSERS = {
-    28: {"name": "咕噜金牌", "url": "http://111.170.58.215:5499/api.php?id=",
+    28: {"name": "咕噜咕噜", "url": "http://111.170.58.215:5499/api.php?id=",
          "mode": "json", "result_key": "url", "server": False},
 }
 
@@ -647,7 +646,7 @@ class _GuluProtocol:
         self.parsers = parsers
 
     def search(self, keyword, page=1, limit=21, category_id="", genre="", area="",
-               sort="vod_hits_month"):
+               sort="vod_hits_month", year="", lang=""):
         sort = str(sort or "vod_hits_month")
         filters = _field_bytes(18, sort.encode("utf-8")) + _field_varint(19, 1)
         category_id = str(category_id or "").strip()
@@ -659,6 +658,12 @@ class _GuluProtocol:
         area = str(area or "").strip()
         if area:
             filters += _field_bytes(6, area)
+        year = str(year or "").strip()
+        if year:
+            filters += _field_bytes(12, year.encode("utf-8"))
+        lang = str(lang or "").strip()
+        if lang:
+            filters += _field_bytes(7, lang.encode("utf-8"))
         payload = (_field_bytes(1, keyword) + _field_varint(2, int(page))
                    + _field_varint(3, int(limit)) + _field_bytes(5, filters))
         response = self.request(61, payload)
@@ -717,6 +722,8 @@ class _GuluProtocol:
                                 "parser_id": (config.get("parser_ids") or [0])[0],
                                 "episodes": episodes})
         return {"id": str(_field_value(data, 1, vod_id, wire=0)),
+                "actor": ",".join(t for t in (_text(v) for v in _field_values(data, 17, wire=2)) if t),
+                "director": _text(_field_value(data, 18, b"", wire=2)),
                 "name": name, "pic": _text(_field_value(data, 13, b"", wire=2)),
                 "remarks": _text(_field_value(data, 22, b"", wire=2)),
                 "content": _text(_field_value(data, 21, b"", wire=2)),
@@ -739,7 +746,7 @@ class _GuluProtocol:
 # ============ T3 接口 ============
 
 class Spider:
-    """咕噜咕噜"""
+    """咕噜咕噜 T3 源（TVBox type=3 Python 爬虫）。"""
 
     source_name = "gulu"
     display_name = "咕噜咕噜"
@@ -756,11 +763,13 @@ class Spider:
     _categories = [("1", "电影"), ("2", "电视剧"), ("3", "综艺"),
                    ("4", "动漫"), ("5", "短剧"), ("60", "直播")]
 
-    # ---- 二级分类（筛选字段经服务器实测：F8=类型，F6=地区，F18=排序） ----
+    # ---- 二级分类（筛选字段经服务器实测：F8=类型，F6=地区，F12=年份，F7=语言，F18=排序） ----
     _filter_genres = ["动作", "喜剧", "爱情", "科幻", "恐怖", "剧情", "战争", "犯罪",
                       "悬疑", "动画", "冒险", "奇幻", "惊悚", "家庭"]
     _filter_areas = ["大陆", "香港", "台湾", "美国", "日本", "韩国", "英国", "法国",
                      "泰国", "印度"]
+    _filter_years = [str(y) for y in range(2026, 2012, -1)]
+    _filter_langs = ["国语", "粤语", "英语", "韩语", "日语", "泰语", "闽南语"]
     _filter_sorts = [("月热门", "vod_hits_month"), ("周热门", "vod_hits_week"),
                      ("日热门", "vod_hits_day"), ("最新", "vod_time"),
                      ("评分", "vod_score")]
@@ -775,6 +784,8 @@ class Spider:
         return [
             _row("类型", [(g, g) for g in cls._filter_genres]),
             _row("地区", [(a, a) for a in cls._filter_areas]),
+            _row("年份", [(y, y) for y in cls._filter_years]),
+            _row("语言", [(l, l) for l in cls._filter_langs]),
             _row("排序", list(cls._filter_sorts)),
         ]
 
@@ -855,17 +866,17 @@ class Spider:
             self.last_error = "%s:%s" % (type(e).__name__, e)
 
     def _search(self, keyword, page=1, limit=21, category_id="", genre="", area="",
-                sort="vod_hits_month"):
+                sort="vod_hits_month", year="", lang=""):
         self._ensure_boot()
         try:
             return self.protocol.search(keyword, page, limit, category_id,
-                                        genre=genre, area=area, sort=sort)
+                                        genre=genre, area=area, sort=sort, year=year, lang=lang)
         except Exception:
             try:
                 self.protocol.reset_session()
                 self._ensure_boot()
                 return self.protocol.search(keyword, page, limit, category_id,
-                                            genre=genre, area=area, sort=sort)
+                                            genre=genre, area=area, sort=sort, year=year, lang=lang)
             except Exception as e:
                 self.last_error = "%s" % e
                 return {"videos": [], "page": page, "pagecount": 1,
@@ -892,8 +903,10 @@ class Spider:
         tid = str(tid or "").strip()
         genre = self._extend_value(extend, "类型")
         area = self._extend_value(extend, "地区")
+        year = self._extend_value(extend, "年份")
+        lang = self._extend_value(extend, "语言")
         sort = self._extend_value(extend, "排序") or "vod_hits_month"
-        result = self._search("", pg, 21, tid, genre=genre, area=area, sort=sort)
+        result = self._search("", pg, 21, tid, genre=genre, area=area, sort=sort, year=year, lang=lang)
         return {"class": [{"type_id": t, "type_name": nm}
                           for t, nm in self._categories],
                 "filters": {t: self._filters_for(t) for t, nm in self._categories},
@@ -935,6 +948,8 @@ class Spider:
             "vod_pic": detail["pic"],
             "vod_year": detail["year"],
             "vod_area": detail["area"],
+            "vod_actor": detail.get("actor", ""),
+            "vod_director": detail.get("director", ""),
             "vod_content": detail["content"],
             "vod_remarks": detail["remarks"],
             "vod_play_from": "$$$".join(p[0] for p in paired),
@@ -1172,7 +1187,7 @@ if __name__ == "__main__":
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(description="咕噜咕噜 T3 源自检")
+    parser = argparse.ArgumentParser(description="咕噜咕噜 蜘蛛源自检")
     sub = parser.add_subparsers(dest="action", required=True)
 
     sub.add_parser("home")
