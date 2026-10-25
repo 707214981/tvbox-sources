@@ -10,7 +10,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 1,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-14T00:40:38Z"
  },
@@ -19,45 +19,45 @@
   "source": "best-fan/iptv-sources",
   "source_path": "cn_all.m3u8",
   "category": "live_m3u",
-  "size": 21956,
-  "sha": "1e7cef744df7",
-  "validate": "104 streams",
+  "size": 36116,
+  "sha": "07b53ea81295",
+  "validate": "166 streams",
   "stream_test": {
    "tested": 8,
-   "ok": 8,
-   "at": "2026-10-24T23:49:41Z"
+   "ok": 7,
+   "at": "2026-10-25T23:38:35Z"
   },
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "live/m3u/best-fan-iptv-sources__cn_cctv.m3u8",
   "source": "best-fan/iptv-sources",
   "source_path": "cn_cctv.m3u8",
   "category": "live_m3u",
-  "size": 8007,
-  "sha": "f674d8b6fd66",
-  "validate": "41 streams",
+  "size": 16667,
+  "sha": "8f3261ca9fa2",
+  "validate": "79 streams",
   "stream_test": {
    "tested": 8,
-   "ok": 8,
-   "at": "2026-10-24T23:49:41Z"
+   "ok": 7,
+   "at": "2026-10-25T23:38:35Z"
   },
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "live/m3u/best-fan-iptv-sources__cn_province.m3u8",
   "source": "best-fan/iptv-sources",
   "source_path": "cn_province.m3u8",
   "category": "live_m3u",
-  "size": 12433,
-  "sha": "bf9d57cc68ef",
-  "validate": "56 streams",
+  "size": 17253,
+  "sha": "ff598eef4f9b",
+  "validate": "77 streams",
   "stream_test": {
    "tested": 8,
    "ok": 8,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "live/m3u/hujingguang-ChinaIPTV__Global.m3u8",
@@ -70,7 +70,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 2,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -85,7 +85,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 2,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -100,7 +100,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -115,7 +115,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -130,7 +130,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -145,7 +145,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -160,7 +160,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -175,7 +175,7 @@
   "stream_test": {
    "tested": 1,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -190,7 +190,7 @@
   "stream_test": {
    "tested": 1,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -205,7 +205,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 6,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -220,7 +220,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 2,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -235,7 +235,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 6,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -250,7 +250,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 5,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -264,8 +264,8 @@
   "validate": "1134 streams",
   "stream_test": {
    "tested": 8,
-   "ok": 4,
-   "at": "2026-10-24T23:49:41Z"
+   "ok": 3,
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -280,7 +280,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -295,7 +295,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 1,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -310,7 +310,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -319,15 +319,15 @@
   "source": "hujingguang/ChinaIPTV",
   "source_path": "cnTV_AutoUpdate.m3u8",
   "category": "live_m3u",
-  "size": 15985,
-  "sha": "3aac7509ebe8",
-  "validate": "72 streams",
+  "size": 15818,
+  "sha": "78e2e0f7344e",
+  "validate": "71 streams",
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "live/m3u/hujingguang-ChinaIPTV__otherCountry.m3u8",
@@ -340,7 +340,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 5,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -355,7 +355,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 6,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -370,7 +370,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 8,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -379,15 +379,15 @@
   "source": "iptv-org/iptv",
   "source_path": "streams/cn.m3u",
   "category": "live_m3u",
-  "size": 56379,
-  "sha": "1bbfb891fa30",
+  "size": 56330,
+  "sha": "bde1e0c95cfc",
   "validate": "510 streams",
   "stream_test": {
    "tested": 8,
    "ok": 5,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
-  "updated": "2026-10-24T00:06:22Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "live/m3u/iptv-org-iptv__streams_cn_cctv.m3u",
@@ -400,7 +400,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 7,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-13T08:58:48Z"
  },
@@ -415,7 +415,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-13T08:58:48Z"
  },
@@ -430,7 +430,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-13T08:58:48Z"
  },
@@ -445,7 +445,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-13T08:58:48Z"
  },
@@ -454,15 +454,15 @@
   "source": "yy-niuma/live-tv",
   "source_path": "output/all_merged.m3u",
   "category": "live_m3u",
-  "size": 235177,
-  "sha": "76eb7ca00f8f",
-  "validate": "1161 streams",
+  "size": 234642,
+  "sha": "841bc6c6021d",
+  "validate": "1162 streams",
   "stream_test": {
    "tested": 8,
    "ok": 8,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "live/m3u/yy-niuma-live-tv__output_hk_merged.m3u",
@@ -470,14 +470,14 @@
   "source_path": "output/hk_merged.m3u",
   "category": "live_m3u",
   "size": 7379,
-  "sha": "2da1be039320",
+  "sha": "6b5ec5e00f2a",
   "validate": "32 streams",
   "stream_test": {
    "tested": 8,
    "ok": 8,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "live/txt/4yt1k-m3u-autoupdate__output_result.txt",
@@ -490,7 +490,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 1,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-14T00:40:38Z"
  },
@@ -500,25 +500,25 @@
   "source_path": "py/TV/output/ipv4/deduplicate_stats.txt",
   "category": "live_txt",
   "size": 140,
-  "sha": "01b95c8da7c1",
+  "sha": "b479f487b3d4",
   "validate": "0 url lines",
   "stream_test": null,
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "live/txt/adminouyang-231006__py_TV_output_ipv4_result.txt",
   "source": "adminouyang/231006",
   "source_path": "py/TV/output/ipv4/result.txt",
   "category": "live_txt",
-  "size": 138666,
-  "sha": "2a3737749b4a",
-  "validate": "1028 url lines",
+  "size": 150746,
+  "sha": "a47e7133dfa5",
+  "validate": "1054 url lines",
   "stream_test": {
    "tested": 8,
-   "ok": 4,
-   "at": "2026-10-24T23:49:41Z"
+   "ok": 3,
+   "at": "2026-10-25T23:38:35Z"
   },
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "live/txt/adminouyang-231006__py_TV_output_ipv4_标清源.txt",
@@ -531,7 +531,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 8,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -541,10 +541,10 @@
   "source_path": "py/TV/output/ipv6/deduplicate_stats.txt",
   "category": "live_txt",
   "size": 135,
-  "sha": "555b6d6b7f40",
+  "sha": "feffa42f4f21",
   "validate": "0 url lines",
   "stream_test": null,
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "live/txt/adminouyang-231006__tvbox_直播源_live.txt",
@@ -557,7 +557,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -572,7 +572,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 8,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -587,7 +587,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -602,7 +602,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -628,7 +628,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 1,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -643,7 +643,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -658,7 +658,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-11T11:52:52Z"
  },
@@ -673,7 +673,7 @@
   "stream_test": {
    "tested": 3,
    "ok": 0,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-13T08:58:48Z"
  },
@@ -688,7 +688,7 @@
   "stream_test": {
    "tested": 8,
    "ok": 8,
-   "at": "2026-10-24T23:49:41Z"
+   "at": "2026-10-25T23:38:35Z"
   },
   "updated": "2026-10-13T08:58:48Z"
  },
@@ -906,11 +906,11 @@
   "source": "hkuc/tvbox-config",
   "source_path": "tv/0/FanchangWang_tv.json",
   "category": "vod_json",
-  "size": 802,
-  "sha": "6aa16f885940",
+  "size": 879,
+  "sha": "0b949078b1d8",
   "validate": "json ok",
   "stream_test": null,
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "vod/json/hkuc-tvbox-config__tv_0_XYQ.json",
@@ -1060,11 +1060,11 @@
   "source": "hkuc/tvbox-config",
   "source_path": "tv/1/FanchangWang_tv.json",
   "category": "vod_json",
-  "size": 802,
-  "sha": "6aa16f885940",
+  "size": 879,
+  "sha": "0b949078b1d8",
   "validate": "json ok",
   "stream_test": null,
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "vod/json/hkuc-tvbox-config__tv_1_XYQ.json",
@@ -1214,11 +1214,11 @@
   "source": "hkuc/tvbox-config",
   "source_path": "tv/2/FanchangWang_tv.json",
   "category": "vod_json",
-  "size": 802,
-  "sha": "6aa16f885940",
+  "size": 879,
+  "sha": "0b949078b1d8",
   "validate": "json ok",
   "stream_test": null,
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "vod/json/hkuc-tvbox-config__tv_2_XYQ.json",
@@ -1368,11 +1368,11 @@
   "source": "hkuc/tvbox-config",
   "source_path": "tv/3/FanchangWang_tv.json",
   "category": "vod_json",
-  "size": 802,
-  "sha": "6aa16f885940",
+  "size": 879,
+  "sha": "0b949078b1d8",
   "validate": "json ok",
   "stream_test": null,
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "vod/json/hkuc-tvbox-config__tv_3_XYQ.json",
@@ -1522,11 +1522,11 @@
   "source": "hkuc/tvbox-config",
   "source_path": "tv/4/FanchangWang_tv.json",
   "category": "vod_json",
-  "size": 802,
-  "sha": "6aa16f885940",
+  "size": 879,
+  "sha": "0b949078b1d8",
   "validate": "json ok",
   "stream_test": null,
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "vod/json/hkuc-tvbox-config__tv_4_XYQ.json",
@@ -1676,11 +1676,11 @@
   "source": "hkuc/tvbox-config",
   "source_path": "tv/5/FanchangWang_tv.json",
   "category": "vod_json",
-  "size": 802,
-  "sha": "6aa16f885940",
+  "size": 879,
+  "sha": "0b949078b1d8",
   "validate": "json ok",
   "stream_test": null,
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "vod/json/hkuc-tvbox-config__tv_5_XYQ.json",
@@ -1830,11 +1830,11 @@
   "source": "hkuc/tvbox-config",
   "source_path": "tv/6/FanchangWang_tv.json",
   "category": "vod_json",
-  "size": 802,
-  "sha": "6aa16f885940",
+  "size": 879,
+  "sha": "0b949078b1d8",
   "validate": "json ok",
   "stream_test": null,
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "vod/json/hkuc-tvbox-config__tv_6_XYQ.json",
@@ -1929,11 +1929,11 @@
   "source": "qist/tvbox",
   "source_path": "dianshi.json",
   "category": "vod_json",
-  "size": 41605,
-  "sha": "ceaf3d1b9f6f",
+  "size": 41762,
+  "sha": "71dcccacbffd",
   "validate": "json ok",
   "stream_test": null,
-  "updated": "2026-10-24T23:49:29Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "vod/py/adminouyang-231006__py_Hotel_hotel.py",
@@ -2799,10 +2799,10 @@
   "source_path": "py/咕噜咕噜.py",
   "category": "vod_py",
   "size": 43978,
-  "sha": "41d9ed13583e",
+  "sha": "483ba7af23c5",
   "validate": "syntax ok",
   "stream_test": null,
-  "updated": "2026-10-22T00:16:48Z"
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "vod/py/phu889-kjh998__py_咖啡直播.py",
@@ -3641,6 +3641,17 @@
   "updated": "2026-10-14T00:40:38Z"
  },
  {
+  "file": "vod/py/phu889-kjh998__py_皮狗DJ站.py",
+  "source": "phu889/kjh998",
+  "source_path": "py/皮狗DJ站.py",
+  "category": "vod_py",
+  "size": 25896,
+  "sha": "3c53fee48eec",
+  "validate": "syntax ok",
+  "stream_test": null,
+  "updated": "2026-10-25T23:38:23Z"
+ },
+ {
   "file": "vod/py/phu889-kjh998__py_看剧AI.py",
   "source": "phu889/kjh998",
   "source_path": "py/看剧AI.py",
@@ -3661,6 +3672,17 @@
   "validate": "syntax ok",
   "stream_test": null,
   "updated": "2026-10-14T00:40:38Z"
+ },
+ {
+  "file": "vod/py/phu889-kjh998__py_看看剧.py",
+  "source": "phu889/kjh998",
+  "source_path": "py/看看剧.py",
+  "category": "vod_py",
+  "size": 17421,
+  "sha": "7e71b069b0e1",
+  "validate": "syntax ok",
+  "stream_test": null,
+  "updated": "2026-10-25T23:38:23Z"
  },
  {
   "file": "vod/py/phu889-kjh998__py_真狼影视.py",

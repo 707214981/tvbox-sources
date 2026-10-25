@@ -479,7 +479,7 @@ def _derive_key(session_id, shared_x):
 
 # ============ HTTP（纯 urllib） ============
 
-def _http_post(url, body, headers, timeout=15):
+def _http_post(url, body, headers, timeout=30):
     request = urllib.request.Request(url, data=body, headers=headers, method="POST")
     try:
         response = urllib.request.urlopen(request, timeout=timeout)
@@ -497,7 +497,7 @@ def _http_post(url, body, headers, timeout=15):
     return content
 
 
-def _http_get(url, headers, timeout=15):
+def _http_get(url, headers, timeout=30):
     request = urllib.request.Request(url, headers=headers, method="GET")
     try:
         response = urllib.request.urlopen(request, timeout=timeout)
@@ -518,7 +518,7 @@ def _http_get(url, headers, timeout=15):
 # ============ 协议客户端 ============
 
 class _GuluProtocol:
-    def __init__(self, timeout=15):
+    def __init__(self, timeout=60):
         self.timeout = timeout
         self.session_id = ""
         self.session_key = b""
@@ -820,7 +820,7 @@ class Spider:
             h["Referer"] = referer
         if self.s is not None:
             try:
-                r = self.s.get(url, headers=h, timeout=12, allow_redirects=True)
+                r = self.s.get(url, headers=h, timeout=30, allow_redirects=True)
                 if r.status_code < 400:
                     return r.text
             except Exception:
@@ -828,7 +828,7 @@ class Spider:
         try:
             import urllib.request
             req = urllib.request.Request(url, headers=h)
-            with urllib.request.urlopen(req, timeout=12) as resp:
+            with urllib.request.urlopen(req, timeout=30) as resp:
                 return resp.read().decode("utf-8", "ignore")
         except Exception:
             return ""
@@ -1076,7 +1076,7 @@ class Spider:
         encoded = quote(str(play_id), safe="")
         target = api_url.replace("{url}", encoded) if "{url}" in api_url else api_url + encoded
         try:
-            status, body = _http_get(target, {"User-Agent": USER_AGENT}, 15)
+            status, body = _http_get(target, {"User-Agent": USER_AGENT}, 30)
             payload = json.loads(body.decode("utf-8", "replace")) if status == 200 else {}
         except Exception:
             payload = {}
@@ -1117,7 +1117,7 @@ class Spider:
         h = dict(self.header)
         if self.s is not None:
             try:
-                r = self.s.get(u, headers=h, timeout=15)
+                r = self.s.get(u, headers=h, timeout=30)
                 return [200, r.headers.get("Content-Type", "application/octet-stream"),
                         r.content, None]
             except Exception:
@@ -1125,7 +1125,7 @@ class Spider:
         try:
             import urllib.request
             req = urllib.request.Request(u, headers=h)
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=30) as resp:
                 return [200, resp.headers.get("Content-Type", "application/octet-stream"),
                         resp.read(), None]
         except Exception:
