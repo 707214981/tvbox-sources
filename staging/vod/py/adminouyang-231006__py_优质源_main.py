@@ -18,7 +18,7 @@ SUBSCRIBE_FILE = os.path.join(CONFIG_DIR, 'subscribe.txt')
 DEMO_FILE = os.path.join(CONFIG_DIR, 'demo.txt')
 LOCAL_FILE = os.path.join(CONFIG_DIR, 'local.txt')
 BLACKLIST_FILE = os.path.join(CONFIG_DIR, 'blacklist.txt')
-RUN_COUNT_FILE = os.path.join(CONFIG_DIR, 'run_count.txt')  # 新增运行次数记录文件
+# RUN_COUNT_FILE = os.path.join(CONFIG_DIR, 'run_count.txt')  # 新增运行次数记录文件
 
 OUTPUT_DIR = 'py/优质源/output'
 IPV4_DIR = os.path.join(OUTPUT_DIR, 'ipv4')
@@ -29,7 +29,7 @@ SPEED_TEST_DURATION = 5
 MAX_WORKERS = 10
 HTTPS_VERIFY = False
 SPEED_THRESHOLD = 300  # 新增速度阈值120KB/s[6](@ref)
-RESET_COUNT = 12       # 新增运行12次后重置黑名单[7](@ref)
+# RESET_COUNT = 12       # 新增运行12次后重置黑名单[7](@ref)
 
 # 全局变量
 failed_domains = set()
@@ -46,38 +46,38 @@ os.makedirs(IPV6_DIR, exist_ok=True)
 # --------------------------
 # 新增运行次数管理函数
 # --------------------------
-def manage_run_count():
-    """管理运行次数并在第12次时清空黑名单[7](@ref)"""
-    try:
-        # 读取当前运行次数
-        if os.path.exists(RUN_COUNT_FILE):
-            with open(RUN_COUNT_FILE, 'r') as f:
-                current_count = int(f.read().strip())
-        else:
-            current_count = 0
+# def manage_run_count():
+#     """管理运行次数并在第12次时清空黑名单[7](@ref)"""
+#     try:
+#         # 读取当前运行次数
+#         if os.path.exists(RUN_COUNT_FILE):
+#             with open(RUN_COUNT_FILE, 'r') as f:
+#                 current_count = int(f.read().strip())
+#         else:
+#             current_count = 0
         
-        # 增加运行次数
-        current_count += 1
-        print(f"🔢 当前是第 {current_count} 次运行")
+#         # 增加运行次数
+#         current_count += 1
+#         print(f"🔢 当前是第 {current_count} 次运行")
         
-        # 检查是否需要清空黑名单[8](@ref)
-        if current_count >= RESET_COUNT:
-            print("🔄 达到12次运行，清空黑名单文件")
-            if os.path.exists(BLACKLIST_FILE):
-                with open(BLACKLIST_FILE, 'w') as f:
-                    f.write('')  # 清空文件内容
-                print("✅ 黑名单文件已清空")
-            current_count = 0  # 重置计数器
+#         # 检查是否需要清空黑名单[8](@ref)
+#         if current_count >= RESET_COUNT:
+#             print("🔄 达到12次运行，清空黑名单文件")
+#             if os.path.exists(BLACKLIST_FILE):
+#                 with open(BLACKLIST_FILE, 'w') as f:
+#                     f.write('')  # 清空文件内容
+#                 print("✅ 黑名单文件已清空")
+#             current_count = 0  # 重置计数器
         
-        # 保存更新后的运行次数
-        with open(RUN_COUNT_FILE, 'w') as f:
-            f.write(str(current_count))
+#         # 保存更新后的运行次数
+#         with open(RUN_COUNT_FILE, 'w') as f:
+#             f.write(str(current_count))
         
-        return current_count
+#         return current_count
         
-    except Exception as e:
-        print(f"❌ 运行次数管理错误: {str(e)}")
-        return 1
+#     except Exception as e:
+#         print(f"❌ 运行次数管理错误: {str(e)}")
+#         return 1
 
 
 # --------------------------
@@ -950,11 +950,11 @@ if __name__ == '__main__':
     print("=" * 60)
     
     # 新增运行次数管理[7](@ref)
-    run_count = manage_run_count()
+    # run_count = manage_run_count()
     
     print(f"🔧 配置参数:")
     print(f"   📊 速度阈值: {SPEED_THRESHOLD}KB/s")
-    print(f"   🔢 运行次数: {run_count}/{RESET_COUNT}")
+    # print(f"   🔢 运行次数: {run_count}/{RESET_COUNT}")
     print(f"   🔐 HTTPS证书验证: {'开启' if HTTPS_VERIFY else '关闭'}")
     print(f"   ⏱️ 测速时长: {SPEED_TEST_DURATION}秒")
     print(f"   👥 最大并发数: {MAX_WORKERS}")
@@ -966,7 +966,7 @@ if __name__ == '__main__':
     with open(SPEED_LOG, 'w', encoding='utf-8') as f:
         f.write(f"测速日志 {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
         f.write(f"速度阈值: {SPEED_THRESHOLD}KB/s\n")
-        f.write(f"运行次数: {run_count}\n")
+        # f.write(f"运行次数: {run_count}\n")
         f.write(f"HTTPS验证: {HTTPS_VERIFY}\n\n")
 
     # 清除URL缓存
@@ -985,9 +985,9 @@ if __name__ == '__main__':
 
     print("\n" + "=" * 60)
     print("🎉 处理完成！")
-    print(f"🔢 本次运行次数: {run_count}")
-    if run_count >= RESET_COUNT - 1:
-        print(f"⚠️ 下次运行将清空黑名单")
+    # print(f"🔢 本次运行次数: {run_count}")
+    # if run_count >= RESET_COUNT - 1:
+    #     print(f"⚠️ 下次运行将清空黑名单")
     print("📁 结果文件:")
     print(f"   IPv4: {IPV4_DIR}/result.txt, result.m3u")
     print(f"   IPv6: {IPV6_DIR}/result.txt, result.m3u")
