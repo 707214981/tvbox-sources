@@ -19,45 +19,45 @@
   "source": "best-fan/iptv-sources",
   "source_path": "cn_all.m3u8",
   "category": "live_m3u",
-  "size": 96591,
-  "sha": "4779e4180352",
-  "validate": "447 streams",
+  "size": 87922,
+  "sha": "4ae8370b1a0f",
+  "validate": "411 streams",
   "stream_test": {
    "tested": 8,
    "ok": 8,
    "at": "2026-11-26T03:49:20Z"
   },
-  "updated": "2026-11-26T03:49:05Z"
+  "updated": "2026-11-27T03:50:16Z"
  },
  {
   "file": "live/m3u/best-fan-iptv-sources__cn_cctv.m3u8",
   "source": "best-fan/iptv-sources",
   "source_path": "cn_cctv.m3u8",
   "category": "live_m3u",
-  "size": 31635,
-  "sha": "035384071191",
-  "validate": "150 streams",
+  "size": 34694,
+  "sha": "ba8ba56a2953",
+  "validate": "165 streams",
   "stream_test": {
    "tested": 8,
    "ok": 8,
    "at": "2026-11-26T03:49:20Z"
   },
-  "updated": "2026-11-26T03:49:05Z"
+  "updated": "2026-11-27T03:50:16Z"
  },
  {
   "file": "live/m3u/best-fan-iptv-sources__cn_province.m3u8",
   "source": "best-fan/iptv-sources",
   "source_path": "cn_province.m3u8",
   "category": "live_m3u",
-  "size": 63919,
-  "sha": "9ef5b7df4e4e",
-  "validate": "292 streams",
+  "size": 51941,
+  "sha": "f8652bd5b08b",
+  "validate": "240 streams",
   "stream_test": {
    "tested": 8,
    "ok": 8,
    "at": "2026-11-26T03:49:20Z"
   },
-  "updated": "2026-11-26T03:49:05Z"
+  "updated": "2026-11-27T03:50:16Z"
  },
  {
   "file": "live/m3u/hujingguang-ChinaIPTV__Global.m3u8",
@@ -320,14 +320,14 @@
   "source_path": "cnTV_AutoUpdate.m3u8",
   "category": "live_m3u",
   "size": 8276,
-  "sha": "bcb05850d82c",
+  "sha": "427dd3164f97",
   "validate": "50 streams",
   "stream_test": {
    "tested": 8,
    "ok": 1,
    "at": "2026-11-26T03:49:20Z"
   },
-  "updated": "2026-11-26T03:49:05Z"
+  "updated": "2026-11-27T03:50:16Z"
  },
  {
   "file": "live/m3u/hujingguang-ChinaIPTV__otherCountry.m3u8",
@@ -379,15 +379,15 @@
   "source": "iptv-org/iptv",
   "source_path": "streams/cn.m3u",
   "category": "live_m3u",
-  "size": 58585,
-  "sha": "c99bf6d2e369",
+  "size": 58721,
+  "sha": "b0046e268e5a",
   "validate": "518 streams",
   "stream_test": {
    "tested": 8,
    "ok": 4,
    "at": "2026-11-26T03:49:20Z"
   },
-  "updated": "2026-11-25T04:38:47Z"
+  "updated": "2026-11-27T03:50:16Z"
  },
  {
   "file": "live/m3u/iptv-org-iptv__streams_cn_cctv.m3u",
@@ -454,30 +454,30 @@
   "source": "yy-niuma/live-tv",
   "source_path": "output/all_merged.m3u",
   "category": "live_m3u",
-  "size": 361518,
-  "sha": "ac7bdb62f827",
-  "validate": "1468 streams",
+  "size": 364196,
+  "sha": "ff1bfac872f3",
+  "validate": "1479 streams",
   "stream_test": {
    "tested": 8,
    "ok": 8,
    "at": "2026-11-26T03:49:20Z"
   },
-  "updated": "2026-11-26T03:49:05Z"
+  "updated": "2026-11-27T03:50:16Z"
  },
  {
   "file": "live/m3u/yy-niuma-live-tv__output_hk_merged.m3u",
   "source": "yy-niuma/live-tv",
   "source_path": "output/hk_merged.m3u",
   "category": "live_m3u",
-  "size": 20782,
-  "sha": "d584547f66c2",
-  "validate": "87 streams",
+  "size": 19462,
+  "sha": "edcd1b538690",
+  "validate": "83 streams",
   "stream_test": {
    "tested": 8,
    "ok": 4,
    "at": "2026-11-26T03:49:20Z"
   },
-  "updated": "2026-11-26T03:49:05Z"
+  "updated": "2026-11-27T03:50:16Z"
  },
  {
   "file": "live/txt/4yt1k-m3u-autoupdate__output_result.txt",
@@ -500,25 +500,25 @@
   "source_path": "py/TV/output/ipv4/deduplicate_stats.txt",
   "category": "live_txt",
   "size": 140,
-  "sha": "fac5a34dcda4",
+  "sha": "ec8d4e20f268",
   "validate": "0 url lines",
   "stream_test": null,
-  "updated": "2026-11-26T03:49:05Z"
+  "updated": "2026-11-27T03:50:16Z"
  },
  {
   "file": "live/txt/adminouyang-231006__py_TV_output_ipv4_result.txt",
   "source": "adminouyang/231006",
   "source_path": "py/TV/output/ipv4/result.txt",
   "category": "live_txt",
-  "size": 151422,
-  "sha": "f6b30ed2cf1d",
-  "validate": "1110 url lines",
+  "size": 158437,
+  "sha": "ceef105c68c3",
+  "validate": "1266 url lines",
   "stream_test": {
    "tested": 8,
    "ok": 6,
    "at": "2026-11-26T03:49:20Z"
   },
-  "updated": "2026-11-26T03:49:05Z"
+  "updated": "2026-11-27T03:50:16Z"
  },
  {
   "file": "live/txt/adminouyang-231006__py_TV_output_ipv4_标清源.txt",
@@ -541,10 +541,10 @@
   "source_path": "py/TV/output/ipv6/deduplicate_stats.txt",
   "category": "live_txt",
   "size": 135,
-  "sha": "40c02b89586b",
+  "sha": "a3afd6692f5b",
   "validate": "0 url lines",
   "stream_test": null,
-  "updated": "2026-11-26T03:49:05Z"
+  "updated": "2026-11-27T03:50:16Z"
  },
  {
   "file": "live/txt/adminouyang-231006__tvbox_直播源_live.txt",
